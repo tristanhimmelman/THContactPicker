@@ -18,7 +18,7 @@
 		29A71BFE16448250005286F1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 29A71BFD16448250005286F1 /* Default-568h@2x.png */; };
 		29A71C11164482BB005286F1 /* THContactPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29A71C0F164482BB005286F1 /* THContactPickerViewController.m */; };
 		29A71C12164482BB005286F1 /* THContactPickerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 29A71C10164482BB005286F1 /* THContactPickerViewController.xib */; };
-		29A71C151644834B005286F1 /* THContactPickerTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 29A71C141644834B005286F1 /* THContactPickerTextView.m */; };
+		29A71C151644834B005286F1 /* THContactPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 29A71C141644834B005286F1 /* THContactPickerView.m */; };
 		29A71C1816448473005286F1 /* THContactBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = 29A71C1716448473005286F1 /* THContactBubble.m */; };
 		6AE31FCC1644DB2C00505230 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AE31FCB1644DB2C00505230 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
@@ -40,8 +40,8 @@
 		29A71C0E164482BB005286F1 /* THContactPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactPickerViewController.h; sourceTree = "<group>"; };
 		29A71C0F164482BB005286F1 /* THContactPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactPickerViewController.m; sourceTree = "<group>"; };
 		29A71C10164482BB005286F1 /* THContactPickerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = THContactPickerViewController.xib; sourceTree = "<group>"; };
-		29A71C131644834B005286F1 /* THContactPickerTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactPickerTextView.h; sourceTree = "<group>"; };
-		29A71C141644834B005286F1 /* THContactPickerTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactPickerTextView.m; sourceTree = "<group>"; };
+		29A71C131644834B005286F1 /* THContactPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactPickerView.h; sourceTree = "<group>"; };
+		29A71C141644834B005286F1 /* THContactPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactPickerView.m; sourceTree = "<group>"; };
 		29A71C1616448473005286F1 /* THContactBubble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactBubble.h; sourceTree = "<group>"; };
 		29A71C1716448473005286F1 /* THContactBubble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactBubble.m; sourceTree = "<group>"; };
 		6AE31FCB1644DB2C00505230 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -97,8 +97,8 @@
 				29A71BF716448250005286F1 /* AppDelegate.m */,
 				29A71C1616448473005286F1 /* THContactBubble.h */,
 				29A71C1716448473005286F1 /* THContactBubble.m */,
-				29A71C131644834B005286F1 /* THContactPickerTextView.h */,
-				29A71C141644834B005286F1 /* THContactPickerTextView.m */,
+				29A71C131644834B005286F1 /* THContactPickerView.h */,
+				29A71C141644834B005286F1 /* THContactPickerView.m */,
 				29A71BEE1644824F005286F1 /* Supporting Files */,
 				29A71C0E164482BB005286F1 /* THContactPickerViewController.h */,
 				29A71C0F164482BB005286F1 /* THContactPickerViewController.m */,
@@ -190,7 +190,7 @@
 				29A71BF416448250005286F1 /* main.m in Sources */,
 				29A71BF816448250005286F1 /* AppDelegate.m in Sources */,
 				29A71C11164482BB005286F1 /* THContactPickerViewController.m in Sources */,
-				29A71C151644834B005286F1 /* THContactPickerTextView.m in Sources */,
+				29A71C151644834B005286F1 /* THContactPickerView.m in Sources */,
 				29A71C1816448473005286F1 /* THContactBubble.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

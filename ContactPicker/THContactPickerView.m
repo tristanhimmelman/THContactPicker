@@ -6,10 +6,10 @@
 //  Copyright (c) 2012 Tristan Himmelman. All rights reserved.
 //
 
-#import "THContactPickerTextView.h"
+#import "THContactPickerView.h"
 #import "THContactBubble.h"
 
-@implementation THContactPickerTextView
+@implementation THContactPickerView
 
 #define kHorizontalPadding 2 // the amount of padding between contact bubbles
 #define kVerticalPadding 4
@@ -33,6 +33,9 @@
     [self.selectedContacts addObject:contactBubble];
     
     [self layoutView];
+    
+    // clear TextView
+    self.textView.text = @"";
 }
 
 - (void)removeContact:(THContactBubble *)contactBubble {
@@ -150,8 +153,14 @@
     
     // Adjust size of view to fit all the lines
     CGRect frame = self.frame;
-    frame.size.height = (lineCount + 1) * self.lineHeight;
-    self.frame = frame;
+    CGFloat newHeight = (lineCount + 1) * self.lineHeight;
+    if (frame.size.height != newHeight){
+        frame.size.height = newHeight;
+        self.frame = frame;
+        if ([self.delegate respondsToSelector:@selector(contactPickerDidResize:)]){
+            [self.delegate contactPickerDidResize:self];
+        }
+    }
     
     // Adjust bottom border to the bottom of the view
     CGRect borderFrame = self.bottomBorder.frame;
@@ -161,6 +170,8 @@
     // Show placeholder if no there are no contacts
     if (self.selectedContacts.count == 0){
         self.placeholderLabel.hidden = NO;
+    } else {
+        self.placeholderLabel.hidden = YES;
     }
 }
 
@@ -189,10 +200,10 @@
             self.selectedContactBubble = [self.selectedContacts lastObject];
             [self.selectedContactBubble select];
         }
-    } else {
-        if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]){
-            [self.delegate contactPickerTextViewDidChange:textView.text];
-        }
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]){
+        [self.delegate contactPickerTextViewDidChange:textView.text];
     }
     
     if ([textView.text isEqualToString:@""] && self.selectedContacts.count == 0){

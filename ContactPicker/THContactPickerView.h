@@ -9,14 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "THContactBubble.h"
 
+@class THContactPickerView;
+
 @protocol THContactPickerDelegate <NSObject>
 
 - (void)contactPickerTextViewDidChange:(NSString *)textViewText;
 - (void)contactPickerDidRemoveContact:(NSString *)contactName;
+- (void)contactPickerDidResize:(THContactPickerView *)contactPickerView;
 
 @end
 
-@interface THContactPickerTextView : UIView <UITextViewDelegate, THContactBubbleDelegate>
+@interface THContactPickerView : UIView <UITextViewDelegate, THContactBubbleDelegate>
 
 @property (nonatomic, strong) NSMutableArray *selectedContacts;
 @property (nonatomic, strong) UILabel *placeholderLabel;
