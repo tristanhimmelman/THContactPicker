@@ -179,17 +179,16 @@
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
 {
+    self.textView.hidden = NO;
+    
     if ( [text isEqualToString:@"\n"] ) { // Return key was pressed
         [self addContact:self.textView.text];
         self.textView.text = @"";
         return NO;
     }
-    return YES;
-}
-
-- (void)textViewDidChange:(UITextView *)textView {
-    // Capture "delete" key press
-    if ([textView.text isEqualToString:@""]){ 
+    
+    // Capture "delete" key press when cell is empty
+    if ([textView.text isEqualToString:@""] && [text isEqualToString:@""]){
         if (self.selectedContactBubble != nil){
             // Delete the selected contact
             [self removeContact:self.selectedContactBubble];
@@ -202,6 +201,10 @@
         }
     }
     
+    return YES;
+}
+
+- (void)textViewDidChange:(UITextView *)textView {    
     if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]){
         [self.delegate contactPickerTextViewDidChange:textView.text];
     }
@@ -221,7 +224,7 @@
     }
     self.selectedContactBubble = contactBubble;
     
-    self.textView.text = @" ";
+    self.textView.text = @"";
     self.textView.hidden = YES;
 }
 
