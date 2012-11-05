@@ -14,22 +14,20 @@
 @protocol THContactPickerDelegate <NSObject>
 
 - (void)contactPickerTextViewDidChange:(NSString *)textViewText;
-- (void)contactPickerDidRemoveContact:(NSString *)contactName;
+- (void)contactPickerDidRemoveContact:(id)contact;
 - (void)contactPickerDidResize:(THContactPickerView *)contactPickerView;
 
 @end
 
-@interface THContactPickerView : UIView <UITextViewDelegate, THContactBubbleDelegate>
+@interface THContactPickerView : UIView <UITextViewDelegate, THContactBubbleDelegate, UIScrollViewDelegate>
 
-@property (nonatomic, strong) NSMutableArray *selectedContacts;
-@property (nonatomic, strong) UILabel *placeholderLabel;
-@property (nonatomic, assign) CGFloat lineHeight;
-@property (nonatomic, strong) UITextView *textView;
-@property (nonatomic, strong) UIView *bottomBorder;
 @property (nonatomic, strong) THContactBubble *selectedContactBubble;
-@property (nonatomic, assign) id <THContactPickerDelegate> delegate;
+@property (nonatomic, assign) IBOutlet id <THContactPickerDelegate> delegate;
+@property (nonatomic, assign) BOOL limitToOne;
 
-- (void)addContact:(NSString *)contactName;
+- (void)addContact:(id)contact withName:(NSString *)name;
+- (void)removeContact:(id)contact;
 - (void)setPlaceholderString:(NSString *)placeholderString;
+- (void)resignKeyboard;
     
 @end

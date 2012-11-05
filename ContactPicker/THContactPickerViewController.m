@@ -22,7 +22,7 @@
     if (self) {
         // Custom initialization
         self.title = @"Contacts";
-        self.contacts = [NSArray arrayWithObjects:@"Tristan", @"John", @"Nicole", @"Nicholas", @"Amara", @"Helga", @"Eric", nil];
+        self.contacts = [NSArray arrayWithObjects:@"Tristan Himmelman", @"John Himmelman", @"Nicole Robertson", @"Nicholas Barss", @"Andrew Sarasin", @"Mike Slon", @"Eric Salpeter", nil];
         self.filteredContacts = self.contacts;
     }
     return self;
@@ -37,7 +37,6 @@
     self.contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 100)];
     self.contactPickerView.delegate = self;
     [self.contactPickerView setPlaceholderString:@"Who are you with?"];
-    [self.contactPickerView addContact:@"Tristan Himmelman"];
     [self.view addSubview:self.contactPickerView];
     
     // Fill the rest of the view with the table view 
@@ -89,7 +88,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    [self.contactPickerView addContact:[self.filteredContacts objectAtIndex:indexPath.row]];
+    [self.contactPickerView addContact:[self.filteredContacts objectAtIndex:indexPath.row] withName:[self.filteredContacts objectAtIndex:indexPath.row]];
     self.filteredContacts = self.contacts;
     [self.tableView reloadData];
 }

@@ -28,6 +28,15 @@
         self.name = name;
         self.isSelected = NO;
         
+        // set colors to defaults
+        self.colorGradientTop = kColorGradientTop;
+        self.colorGradientBottom = kColorGradientBottom;
+        self.colorBorder = kColorBorder;
+        
+        self.colorSelectedGradientTop = kColorSelectedGradientTop;
+        self.colorSelectedGradientBottom = kColorSelectedGradientBottom;
+        self.colorSelectedBorder = kColorSelectedBorder;
+        
         [self setupView];
     }
     return self;
@@ -39,6 +48,11 @@
     self.label.backgroundColor = [UIColor clearColor];
     self.label.text = self.name;
     [self addSubview:self.label];
+    
+    self.textView = [[UITextView alloc] init];
+    self.textView.delegate = self;
+    self.textView.hidden = YES;
+    [self addSubview:self.textView];
     
     // Adjust the label frames
     [self.label sizeToFit];
@@ -76,27 +90,29 @@
     }
 
     CALayer *viewLayer = [self layer];
-    viewLayer.borderColor = kColorSelectedBorder.CGColor;
+    viewLayer.borderColor = self.colorSelectedBorder.CGColor;
     
-    self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[kColorSelectedGradientTop CGColor], (id)[kColorSelectedGradientBottom CGColor], nil];
+    self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[self.colorSelectedGradientTop CGColor], (id)[self.colorSelectedGradientBottom CGColor], nil];
 
     self.label.textColor = [UIColor whiteColor];
     
     self.isSelected = YES;
     
-    [self becomeFirstResponder];
+    [self.textView becomeFirstResponder];
 }
 
 - (void)unSelect {
     CALayer *viewLayer = [self layer];
-    viewLayer.borderColor = kColorBorder.CGColor;
+    viewLayer.borderColor = self.colorBorder.CGColor;
     
-    self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[kColorGradientTop CGColor], (id)[kColorGradientBottom CGColor], nil];
+    self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[self.colorGradientTop CGColor], (id)[self.colorGradientBottom CGColor], nil];
     
     self.label.textColor = [UIColor blackColor];
 
     [self setNeedsDisplay];
     self.isSelected = NO;
+    
+    [self.textView resignFirstResponder];
 }
 
 - (void)handleTapGesture {
@@ -105,6 +121,26 @@
     } else {
         [self select];
     }
+}
+
+#pragma mark - UITextViewDelegate
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
+{
+    self.textView.hidden = NO;
+    
+    if ( [text isEqualToString:@"\n"] ) { // Return key was pressed
+        return NO;
+    }
+    
+    // Capture "delete" key press when cell is empty
+    if ([textView.text isEqualToString:@""] && [text isEqualToString:@""]){
+        if ([self.delegate respondsToSelector:@selector(contactBubbleShouldBeRemoved:)]){
+            [self.delegate contactBubbleShouldBeRemoved:self];
+        }
+    }
+    
+    return YES;
 }
 
 /*
