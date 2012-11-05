@@ -23,6 +23,7 @@
         // Custom initialization
         self.title = @"Contacts";
         self.contacts = [NSArray arrayWithObjects:@"Tristan Himmelman", @"John Himmelman", @"Nicole Robertson", @"Nicholas Barss", @"Andrew Sarasin", @"Mike Slon", @"Eric Salpeter", nil];
+        self.selectedContacts = [NSMutableArray array];
         self.filteredContacts = self.contacts;
     }
     return self;
@@ -82,13 +83,33 @@
     }
     cell.textLabel.text = [self.filteredContacts objectAtIndex:indexPath.row];
     
+    if ([self.selectedContacts containsObject:[self.filteredContacts objectAtIndex:indexPath.row]]){
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    } else {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
-    [self.contactPickerView addContact:[self.filteredContacts objectAtIndex:indexPath.row] withName:[self.filteredContacts objectAtIndex:indexPath.row]];
+    NSString *user = [self.filteredContacts objectAtIndex:indexPath.row];
+    
+    if ([self.selectedContacts containsObject:user]){ // contact is already selected so remove it from ContactPickerView
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        [self.selectedContacts removeObject:user];
+        [self.contactPickerView removeContact:user];
+    } else {
+        // Contact has not been selected, add it to THContactPickerView
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        [self.selectedContacts addObject:user];
+        [self.contactPickerView addContact:user withName:user];
+    }
+    
     self.filteredContacts = self.contacts;
     [self.tableView reloadData];
 }
@@ -109,8 +130,12 @@
     [self adjustTableViewFrame];
 }
 
-- (void)contactPickerDidRemoveContact:(NSString *)contactName {
+- (void)contactPickerDidRemoveContact:(id)contact {
+    [self.selectedContacts removeObject:contact];
 
+    int index = [self.contacts indexOfObject:contact];
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+    cell.accessoryType = UITableViewCellAccessoryNone;
 }
 
 @end
