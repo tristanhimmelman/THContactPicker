@@ -48,6 +48,8 @@
 }
 
 - (void)setup {
+    self.viewPadding = kViewPadding;
+    
     self.contacts = [NSMutableDictionary dictionary];
     self.contactKeys = [NSMutableArray array];
     
@@ -55,7 +57,7 @@
     THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:@"Sample"];
     self.lineHeight = contactBubble.frame.size.height + 2 * kVerticalPadding;
     
-    self.scrollView = [[UIScrollView alloc] initWithFrame:self.frame];
+    self.scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
     self.scrollView.scrollsToTop = NO;
     self.scrollView.delegate = self;
     [self addSubview:self.scrollView];
@@ -80,7 +82,7 @@
     [layer setShadowRadius:1.0f];
     
     // Add placeholder label
-    self.placeholderLabel = [[UILabel alloc] initWithFrame:CGRectMake(8, kViewPadding, self.frame.size.width, self.lineHeight)];
+    self.placeholderLabel = [[UILabel alloc] initWithFrame:CGRectMake(8, self.viewPadding, self.frame.size.width, self.lineHeight)];
     self.placeholderLabel.font = contactBubble.label.font;
     self.placeholderLabel.textColor = [UIColor grayColor];
     self.placeholderLabel.backgroundColor = [UIColor clearColor];
@@ -94,9 +96,26 @@
 
 #pragma mark - Public functions
 
-/**
- *  Pass in an object and it's name that should be displayed in the contact picker
- */
+- (void)disableDropShadow {
+    CALayer *layer = [self layer];
+    [layer setShadowRadius:0];
+    [layer setShadowOpacity:0];
+}
+
+- (void)setFont:(UIFont *)font {
+    _font = font;
+    // Create a contact bubble to determine the height of a line
+    THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:@"Sample"];
+    [contactBubble setFont:font];
+    self.lineHeight = contactBubble.frame.size.height + 2 * kVerticalPadding;
+    
+    self.textView.font = font;
+    [self.textView sizeToFit];
+    
+    self.placeholderLabel.font = font;
+    self.placeholderLabel.frame = CGRectMake(8, self.viewPadding, self.frame.size.width, self.lineHeight);
+}
+
 - (void)addContact:(id)contact withName:(NSString *)name {
     if ([self.contactKeys containsObject:contact]){
         NSLog(@"Cannot add the same object twice to ContactPickerView");
@@ -106,6 +125,9 @@
     self.textView.text = @"";
     
     THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name];
+    if (self.font != nil){
+        [contactBubble setFont:self.font];
+    }
     contactBubble.delegate = self;
     [self.contacts setObject:contactBubble forKey:contact];
     [self.contactKeys addObject:contact];
@@ -153,6 +175,12 @@
     [self.textView resignFirstResponder];
 }
 
+- (void)setViewPadding:(CGFloat)viewPadding {
+    _viewPadding = viewPadding;
+
+    [self layoutView];
+}
+
 #pragma mark - Private functions
 
 - (void)scrollToBottomWithAnimation:(BOOL)animated {
@@ -197,7 +225,7 @@
 
         if (CGRectIsNull(frameOfLastBubble)){ // first line
             bubbleFrame.origin.x = kHorizontalPadding;
-            bubbleFrame.origin.y = kVerticalPadding + kViewPadding;
+            bubbleFrame.origin.y = kVerticalPadding + self.viewPadding;
         } else {
             // Check if contact bubble will fit on the current line
             CGFloat width = bubbleFrame.size.width + 2 * kHorizontalPadding;
@@ -208,7 +236,7 @@
             } else { // No space on line, jump to next line
                 lineCount++;
                 bubbleFrame.origin.x = kHorizontalPadding;
-                bubbleFrame.origin.y = (lineCount * self.lineHeight) + kVerticalPadding + 	kViewPadding;
+                bubbleFrame.origin.y = (lineCount * self.lineHeight) + kVerticalPadding + 	self.viewPadding;
             }
         }
         frameOfLastBubble = bubbleFrame;
@@ -236,7 +264,7 @@
         textViewFrame.size.width = self.frame.size.width - 2 * kHorizontalPadding;
     }
     self.textView.frame = textViewFrame;
-    self.textView.center = CGPointMake(self.textView.center.x, lineCount * self.lineHeight + self.lineHeight / 2 + kVerticalPadding + kViewPadding);
+    self.textView.center = CGPointMake(self.textView.center.x, lineCount * self.lineHeight + self.lineHeight / 2 + kVerticalPadding + self.viewPadding);
     
     // Add text view if it hasn't been added 
     if (self.textView.superview == nil){
@@ -246,19 +274,25 @@
     // Hide the text view if we are limiting number of selected contacts to 1 and a contact has already been added
     if (self.limitToOne && self.contacts.count >= 1){
         self.textView.hidden = YES;
+        lineCount = 0;
     }
     
     // Adjust scroll view content size
-    CGRect frame = self.frame;
-    CGFloat maxFrameHeight = 2 * self.lineHeight + 2 * kViewPadding; // limit frame to two lines of content
-    CGFloat newHeight = (lineCount + 1) * self.lineHeight + 2 * kViewPadding;
+    CGRect frame = self.bounds;
+    CGFloat maxFrameHeight = 2 * self.lineHeight + 2 * self.viewPadding; // limit frame to two lines of content
+    CGFloat newHeight = (lineCount + 1) * self.lineHeight + 2 * self.viewPadding;
     self.scrollView.contentSize = CGSizeMake(self.frame.size.width, newHeight);
 
     // Adjust frame of view if necessary
     newHeight = (newHeight > maxFrameHeight) ? maxFrameHeight : newHeight;
     if (self.frame.size.height != newHeight){
+        // Adjust self height
+        CGRect selfFrame = self.frame;
+        selfFrame.size.height = newHeight;
+        self.frame = selfFrame;
+        
+        // Adjust scroll view height
         frame.size.height = newHeight;
-        self.frame = frame;
         self.scrollView.frame = frame;
         
         if ([self.delegate respondsToSelector:@selector(contactPickerDidResize:)]){
@@ -326,6 +360,9 @@
 #pragma mark - Gesture Recognizer
 
 - (void)handleTapGesture {
+    if (self.limitToOne && self.contactKeys.count == 1){
+        return;
+    }
     [self scrollToBottomWithAnimation:YES];
     
     // Show textField

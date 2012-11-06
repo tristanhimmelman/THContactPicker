@@ -12,7 +12,6 @@
 
 #define kHorizontalPadding 10
 #define kVerticalPadding 2
-#define kCornerRadius 12
 
 #define kColorGradientTop [UIColor colorWithRed:219.0/255.0 green:229.0/255.0 blue:249.0/255.0 alpha:1.0]
 #define kColorGradientBottom [UIColor colorWithRed:188.0/255.0 green:205.0/255.0 blue:242.0/255.0 alpha:1.0]
@@ -54,34 +53,46 @@
     self.textView.hidden = YES;
     [self addSubview:self.textView];
     
-    // Adjust the label frames
-    [self.label sizeToFit];
-    CGRect frame = self.label.frame;
-    frame.origin.x = kHorizontalPadding;
-    frame.origin.y = kVerticalPadding;
-    self.label.frame = frame;
-
-    // Adjust view frame
-    self.bounds = CGRectMake(0, 0, frame.size.width + 2 * kHorizontalPadding, frame.size.height + 2 * kVerticalPadding);
-
-    // Round the corners
-    CALayer *viewLayer = [self layer];
-    viewLayer.cornerRadius = kCornerRadius;
-    viewLayer.borderWidth = 1;
-    viewLayer.masksToBounds = YES;
-    
-    // Create gradient layer
-    self.gradientLayer = [CAGradientLayer layer];
-    self.gradientLayer.frame = self.bounds;
-    [self.layer insertSublayer:self.gradientLayer atIndex:0];
-    
     // Create a tap gesture recognizer
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture)];
     tapGesture.numberOfTapsRequired = 1;
     tapGesture.numberOfTouchesRequired = 1;
     [self addGestureRecognizer:tapGesture];
     
+    [self adjustSize];
+    
     [self unSelect];
+}
+
+- (void)adjustSize {
+    // Adjust the label frames
+    [self.label sizeToFit];
+    CGRect frame = self.label.frame;
+    frame.origin.x = kHorizontalPadding;
+    frame.origin.y = kVerticalPadding;
+    self.label.frame = frame;
+    
+    // Adjust view frame
+    self.bounds = CGRectMake(0, 0, frame.size.width + 2 * kHorizontalPadding, frame.size.height + 2 * kVerticalPadding);
+    
+    // Create gradient layer
+    if (self.gradientLayer == nil){
+        self.gradientLayer = [CAGradientLayer layer];
+        [self.layer insertSublayer:self.gradientLayer atIndex:0];
+    }
+    self.gradientLayer.frame = self.bounds;
+
+    // Round the corners
+    CALayer *viewLayer = [self layer];
+    viewLayer.cornerRadius = self.bounds.size.height / 2;
+    viewLayer.borderWidth = 1;
+    viewLayer.masksToBounds = YES;
+}
+
+- (void)setFont:(UIFont *)font {
+    self.label.font = font;
+
+    [self adjustSize];
 }
 
 - (void)select {

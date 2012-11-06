@@ -38,5 +38,6 @@
 - (id)initWithName:(NSString *)name;
 - (void)select;
 - (void)unSelect;
+- (void)setFont:(UIFont *)font;
 
 @end
