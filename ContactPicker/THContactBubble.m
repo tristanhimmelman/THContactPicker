@@ -22,19 +22,33 @@
 #define kColorSelectedBorder [UIColor colorWithRed:56.0/255.0 green:0/255.0 blue:233.0/255.0 alpha:1.0]
 
 - (id)initWithName:(NSString *)name {
+    if ([self initWithName:name color:nil selectedColor:nil]) {
+
+    }
+    return self;
+}
+
+- (id)initWithName:(NSString *)name
+             color:(THBubbleColor *)color
+     selectedColor:(THBubbleColor *)selectedColor {
     self = [super init];
     if (self){
         self.name = name;
         self.isSelected = NO;
+
+        if (! color)
+            color = [[THBubbleColor alloc] initWithGradientTop:kColorGradientTop
+                                                gradientBottom:kColorGradientBottom
+                                                        border:kColorBorder];
+
+        if (! selectedColor)
+            color = [[THBubbleColor alloc] initWithGradientTop:kColorSelectedGradientTop
+                                                gradientBottom:kColorSelectedGradientBottom
+                                                        border:kColorSelectedBorder];
         
-        // set colors to defaults
-        self.colorGradientTop = kColorGradientTop;
-        self.colorGradientBottom = kColorGradientBottom;
-        self.colorBorder = kColorBorder;
-        
-        self.colorSelectedGradientTop = kColorSelectedGradientTop;
-        self.colorSelectedGradientBottom = kColorSelectedGradientBottom;
-        self.colorSelectedBorder = kColorSelectedBorder;
+        self.color = color;
+        self.selectedColor = selectedColor;
+
         
         [self setupView];
     }
@@ -101,9 +115,9 @@
     }
 
     CALayer *viewLayer = [self layer];
-    viewLayer.borderColor = self.colorSelectedBorder.CGColor;
+    viewLayer.borderColor = self.selectedColor.border.CGColor;
     
-    self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[self.colorSelectedGradientTop CGColor], (id)[self.colorSelectedGradientBottom CGColor], nil];
+    self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[self.selectedColor.gradientTop CGColor], (id)[self.selectedColor.gradientBottom CGColor], nil];
 
     self.label.textColor = [UIColor whiteColor];
     
@@ -114,9 +128,9 @@
 
 - (void)unSelect {
     CALayer *viewLayer = [self layer];
-    viewLayer.borderColor = self.colorBorder.CGColor;
+    viewLayer.borderColor = self.color.border.CGColor;
     
-    self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[self.colorGradientTop CGColor], (id)[self.colorGradientBottom CGColor], nil];
+    self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[self.color.gradientTop CGColor], (id)[self.color.gradientBottom CGColor], nil];
     
     self.label.textColor = [UIColor blackColor];
 
