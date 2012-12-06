@@ -20,6 +20,9 @@
 @property (nonatomic, assign) CGFloat lineHeight;
 @property (nonatomic, strong) UITextView *textView;
 
+@property (nonatomic, strong) THBubbleColor *bubbleColor;
+@property (nonatomic, strong) THBubbleColor *bubbleSelectedColor;
+
 @end
 
 @implementation THContactPickerView
@@ -124,7 +127,9 @@
     
     self.textView.text = @"";
     
-    THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name];
+    THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name
+                                                                     color:self.bubbleColor
+                                                             selectedColor:self.bubbleSelectedColor];
     if (self.font != nil){
         [contactBubble setFont:self.font];
     }
@@ -179,6 +184,24 @@
     _viewPadding = viewPadding;
 
     [self layoutView];
+}
+
+- (void)setBubbleColor:(THBubbleColor *)color selectedColor:(THBubbleColor *)selectedColor {
+    self.bubbleColor = color;
+    self.bubbleSelectedColor = selectedColor;
+
+    for (id contactKey in self.contactKeys){
+        THContactBubble *contactBubble = (THContactBubble *)[self.contacts objectForKey:contactKey];
+
+        contactBubble.color = color;
+        contactBubble.selectedColor = selectedColor;
+
+        // thid stuff reloads bubble
+        if (contactBubble.isSelected)
+            [contactBubble select];
+        else
+            [contactBubble unSelect];
+    }
 }
 
 #pragma mark - Private functions

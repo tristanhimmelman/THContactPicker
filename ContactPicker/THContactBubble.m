@@ -42,9 +42,9 @@
                                                         border:kColorBorder];
 
         if (! selectedColor)
-            color = [[THBubbleColor alloc] initWithGradientTop:kColorSelectedGradientTop
-                                                gradientBottom:kColorSelectedGradientBottom
-                                                        border:kColorSelectedBorder];
+            selectedColor = [[THBubbleColor alloc] initWithGradientTop:kColorSelectedGradientTop
+                                                        gradientBottom:kColorSelectedGradientBottom
+                                                                border:kColorSelectedBorder];
         
         self.color = color;
         self.selectedColor = selectedColor;
