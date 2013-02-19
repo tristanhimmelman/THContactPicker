@@ -207,10 +207,17 @@
 #pragma mark - Private functions
 
 - (void)scrollToBottomWithAnimation:(BOOL)animated {
-    CGSize size = self.scrollView.contentSize;
-    CGRect frame = CGRectMake(0, size.height - self.scrollView.frame.size.height, size.width, self.scrollView.frame.size.height);
-    
-    [self.scrollView scrollRectToVisible:frame animated:animated];
+    if (animated){
+        CGSize size = self.scrollView.contentSize;
+        CGRect frame = CGRectMake(0, size.height - self.scrollView.frame.size.height, size.width, self.scrollView.frame.size.height);
+        
+        [self.scrollView scrollRectToVisible:frame animated:animated];
+    } else {
+        // this block is here because scrollRectToVisible with animated NO causes crashes on iOS 5 when the user tries to delete many contacts really quickly
+        CGPoint offset = self.scrollView.contentOffset;
+        offset.y = self.scrollView.contentSize.height - self.scrollView.frame.size.height;
+        self.scrollView.contentOffset = offset;
+    }
 }
 
 - (void)removeContactBubble:(THContactBubble *)contactBubble {
