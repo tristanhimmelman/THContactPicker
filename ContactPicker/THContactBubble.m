@@ -165,6 +165,14 @@
         }
     }
     
+    if (self.isSelected){
+        self.textView.text = @"";
+        [self unSelect];
+        if ([self.delegate respondsToSelector:@selector(contactBubbleWasUnSelected:)]){
+            [self.delegate contactBubbleWasUnSelected:self];
+        }
+    }
+    
     return YES;
 }
 

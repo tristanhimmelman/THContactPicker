@@ -15,6 +15,7 @@
 @protocol THContactBubbleDelegate <NSObject>
 
 - (void)contactBubbleWasSelected:(THContactBubble *)contactBubble;
+- (void)contactBubbleWasUnSelected:(THContactBubble *)contactBubble;
 - (void)contactBubbleShouldBeRemoved:(THContactBubble *)contactBubble;
 
 @end

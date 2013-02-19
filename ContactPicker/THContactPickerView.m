@@ -383,6 +383,15 @@
     self.textView.hidden = YES;
 }
 
+- (void)contactBubbleWasUnSelected:(THContactBubble *)contactBubble {
+    if (self.selectedContactBubble != nil){
+        
+    }
+    [self.textView becomeFirstResponder];
+    self.textView.text = @"";
+    self.textView.hidden = NO;
+}
+
 - (void)contactBubbleShouldBeRemoved:(THContactBubble *)contactBubble {
     [self removeContactBubble:contactBubble];
 }
