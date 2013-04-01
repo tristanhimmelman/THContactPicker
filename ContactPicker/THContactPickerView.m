@@ -120,7 +120,8 @@
 }
 
 - (void)addContact:(id)contact withName:(NSString *)name {
-    if ([self.contactKeys containsObject:contact]){
+    id contactKey = [NSValue valueWithNonretainedObject:contact];
+    if ([self.contactKeys containsObject:contactKey]){
         NSLog(@"Cannot add the same object twice to ContactPickerView");
         return;
     }
@@ -134,8 +135,8 @@
         [contactBubble setFont:self.font];
     }
     contactBubble.delegate = self;
-    [self.contacts setObject:contactBubble forKey:contact];
-    [self.contactKeys addObject:contact];
+    [self.contacts setObject:contactBubble forKey:contactKey];
+    [self.contactKeys addObject:contactKey];
     
     // update layout
     [self layoutView];
@@ -227,7 +228,7 @@
     }
     
     if ([self.delegate respondsToSelector:@selector(contactPickerDidRemoveContact:)]){
-        [self.delegate contactPickerDidRemoveContact:contact];
+        [self.delegate contactPickerDidRemoveContact:[contact nonretainedObjectValue]];
     }
     
     [self removeContact:contact];
