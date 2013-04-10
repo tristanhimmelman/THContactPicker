@@ -153,13 +153,15 @@
 }
 
 - (void)removeContact:(id)contact {
+  
+    id contactKey = [NSValue valueWithNonretainedObject:contact];
     // Remove contactBubble from view
-    THContactBubble *contactBubble = [self.contacts objectForKey:contact];
+    THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
     [contactBubble removeFromSuperview];
     
     // Remove contact from memory
-    [self.contacts removeObjectForKey:contact];
-    [self.contactKeys removeObject:contact];
+    [self.contacts removeObjectForKey:contactKey];
+    [self.contactKeys removeObject:contactKey];
     
     // update layout
     [self layoutView];
@@ -231,7 +233,27 @@
         [self.delegate contactPickerDidRemoveContact:[contact nonretainedObjectValue]];
     }
     
-    [self removeContact:contact];
+    [self removeContactByKey:contact];
+}
+
+- (void)removeContactByKey:(id)contactKey {
+  
+  // Remove contactBubble from view
+  THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
+  [contactBubble removeFromSuperview];
+  
+  // Remove contact from memory
+  [self.contacts removeObjectForKey:contactKey];
+  [self.contactKeys removeObject:contactKey];
+  
+  // update layout
+  [self layoutView];
+  
+  [self.textView becomeFirstResponder];
+  self.textView.hidden = NO;
+  self.textView.text = @"";
+  
+  [self scrollToBottomWithAnimation:NO];
 }
 
 - (id)contactForContactBubble:(THContactBubble *)contactBubble {
