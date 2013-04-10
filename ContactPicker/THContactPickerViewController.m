@@ -33,7 +33,10 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    
+//    UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonItemStyleBordered target:self action:@selector(removeAllContacts:)];
+    UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithTitle:@"Remove All" style:UIBarButtonItemStylePlain target:self action:@selector(removeAllContacts:)];
+    self.navigationItem.rightBarButtonItem = barButton;
+  
     // Initialize and add Contact Picker View
     self.contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 100)];
     self.contactPickerView.delegate = self;
@@ -136,6 +139,13 @@
     int index = [self.contacts indexOfObject:contact];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     cell.accessoryType = UITableViewCellAccessoryNone;
+}
+
+- (void)removeAllContacts:(id)sender
+{
+    [self.contactPickerView removeAllContacts];
+    [self.selectedContacts removeAllObjects];
+    [self.tableView reloadData];
 }
 
 @end

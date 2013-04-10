@@ -152,6 +152,23 @@
     [self.textView becomeFirstResponder];
 }
 
+- (void)removeAllContacts
+{
+    for(id contact in [self.contacts allKeys]){
+      THContactBubble *contactBubble = [self.contacts objectForKey:contact];
+      [contactBubble removeFromSuperview];
+    }
+    [self.contacts removeAllObjects];
+    [self.contactKeys removeAllObjects];
+  
+    // update layout
+    [self layoutView];
+  
+    self.textView.hidden = NO;
+    self.textView.text = @"";
+  
+}
+
 - (void)removeContact:(id)contact {
   
     id contactKey = [NSValue valueWithNonretainedObject:contact];
