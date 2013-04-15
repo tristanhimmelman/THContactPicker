@@ -145,6 +145,7 @@
 {
     [self.contactPickerView removeAllContacts];
     [self.selectedContacts removeAllObjects];
+    self.filteredContacts = self.contacts;
     [self.tableView reloadData];
 }
 
