@@ -29,6 +29,7 @@
 
 - (void)addContact:(id)contact withName:(NSString *)name;
 - (void)removeContact:(id)contact;
+- (void)removeAllContacts;
 - (void)setPlaceholderString:(NSString *)placeholderString;
 - (void)disableDropShadow;
 - (void)resignKeyboard;
