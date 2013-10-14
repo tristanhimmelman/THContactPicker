@@ -9,6 +9,31 @@
 #import "THContactPickerView.h"
 #import "THContactBubble.h"
 
+@interface WeakContactReference : NSObject <NSCopying>
+
+@property (nonatomic, weak) id contactReference;
+
++ (id)weakContactReferenceWithContact:(id)contactObj;
+
+@end
+
+@implementation WeakContactReference
+
++ (id)weakContactReferenceWithContact:(id)contactObj
+{
+    WeakContactReference* wcr = [[WeakContactReference alloc] init];
+    wcr.contactReference = contactObj;
+    
+    return wcr;
+}
+
+- (id)copyWithZone:(NSZone*)zone
+{
+    return self;
+}
+
+@end
+
 @interface THContactPickerView (){
     BOOL _shouldSelectTextView;
 }
@@ -129,7 +154,7 @@
 }
 
 - (void)addContact:(id)contact withName:(NSString *)name {
-    id contactKey = [NSValue valueWithNonretainedObject:contact];
+    WeakContactReference* contactKey = [WeakContactReference weakContactReferenceWithContact:contact];
     if ([self.contactKeys containsObject:contactKey]){
         NSLog(@"Cannot add the same object twice to ContactPickerView");
         return;
@@ -180,14 +205,15 @@
 
 - (void)removeContact:(id)contact {
     
-    id contactKey = [NSValue valueWithNonretainedObject:contact];
+    WeakContactReference* wcr = [WeakContactReference weakContactReferenceWithContact:contact];
+    
     // Remove contactBubble from view
-    THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
+    THContactBubble *contactBubble = [self.contacts objectForKey:wcr];
     [contactBubble removeFromSuperview];
     
     // Remove contact from memory
-    [self.contacts removeObjectForKey:contactKey];
-    [self.contactKeys removeObject:contactKey];
+    [self.contacts removeObjectForKey:wcr];
+    [self.contactKeys removeObject:wcr];
     
     // update layout
     [self layoutView];
@@ -250,16 +276,13 @@
 }
 
 - (void)removeContactBubble:(THContactBubble *)contactBubble {
-    id contact = [self contactForContactBubble:contactBubble];
-    if (contact == nil){
-        return;
+    WeakContactReference* wcr = [self contactForContactBubble:contactBubble];
+    
+    if ([self.delegate respondsToSelector:@selector(contactPickerDidRemoveContact:)] && wcr.contactReference != nil){
+        [self.delegate contactPickerDidRemoveContact:wcr.contactReference];
     }
     
-    if ([self.delegate respondsToSelector:@selector(contactPickerDidRemoveContact:)]){
-        [self.delegate contactPickerDidRemoveContact:[contact nonretainedObjectValue]];
-    }
-    
-    [self removeContactByKey:contact];
+    [self removeContactByKey:wcr];
 }
 
 - (void)removeContactByKey:(id)contactKey {
@@ -470,14 +493,5 @@
         [self selectTextView];
     }
 }
-
-/*
- // Only override drawRect: if you perform custom drawing.
- // An empty implementation adversely affects performance during animation.
- - (void)drawRect:(CGRect)rect
- {
- // Drawing code
- }
- */
 
 @end
