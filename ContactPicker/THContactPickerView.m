@@ -9,6 +9,31 @@
 #import "THContactPickerView.h"
 #import "THContactBubble.h"
 
+@interface WeakContactReference : NSObject <NSCopying>
+
+@property (nonatomic, weak) id contactReference;
+
++ (id)weakContactReferenceWithContact:(id)contactObj;
+
+@end
+
+@implementation WeakContactReference
+
++ (id)weakContactReferenceWithContact:(id)contactObj
+{
+    WeakContactReference* wcr = [[WeakContactReference alloc] init];
+    wcr.contactReference = contactObj;
+    
+    return wcr;
+}
+
+- (id)copyWithZone:(NSZone*)zone
+{
+    return self;
+}
+
+@end
+
 @interface THContactPickerView (){
     BOOL _shouldSelectTextView;
 }
@@ -44,7 +69,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code        
+        // Initialization code
         [self setup];
     }
     return self;
@@ -66,12 +91,21 @@
     [self addSubview:self.scrollView];
     
     // Create TextView
-    // It would make more sense to use a UITextField (because it doesnt wrap text), however, there is no easy way to detect the "delete" key press using a UITextField when there is no 
+    // It would make more sense to use a UITextField (because it doesnt wrap text), however, there is no easy way to detect the "delete" key press using a UITextField when there is no
     self.textView = [[UITextView alloc] init];
     self.textView.delegate = self;
     self.textView.font = contactBubble.label.font;
     self.textView.backgroundColor = [UIColor clearColor];
-    self.textView.contentInset = UIEdgeInsetsMake(-11, -6, 0, 0);
+    
+    if ([self.textView respondsToSelector:@selector(setTextContainerInset:)])
+    {
+        self.textView.textContainerInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    }
+    else
+    {
+        self.textView.contentInset = UIEdgeInsetsMake(-11, -6, 0, 0);
+    }
+    
     self.textView.scrollEnabled = NO;
     self.textView.scrollsToTop = NO;
     [self.textView becomeFirstResponder];
@@ -120,7 +154,7 @@
 }
 
 - (void)addContact:(id)contact withName:(NSString *)name {
-    id contactKey = [NSValue valueWithNonretainedObject:contact];
+    WeakContactReference* contactKey = [WeakContactReference weakContactReferenceWithContact:contact];
     if ([self.contactKeys containsObject:contactKey]){
         NSLog(@"Cannot add the same object twice to ContactPickerView");
         return;
@@ -155,34 +189,35 @@
 - (void)removeAllContacts
 {
     for(id contact in [self.contacts allKeys]){
-      THContactBubble *contactBubble = [self.contacts objectForKey:contact];
-      [contactBubble removeFromSuperview];
+        THContactBubble *contactBubble = [self.contacts objectForKey:contact];
+        [contactBubble removeFromSuperview];
     }
     [self.contacts removeAllObjects];
     [self.contactKeys removeAllObjects];
-  
+    
     // update layout
     [self layoutView];
-  
+    
     self.textView.hidden = NO;
     self.textView.text = @"";
-  
+    
 }
 
 - (void)removeContact:(id)contact {
-  
-    id contactKey = [NSValue valueWithNonretainedObject:contact];
+    
+    WeakContactReference* wcr = [WeakContactReference weakContactReferenceWithContact:contact];
+    
     // Remove contactBubble from view
-    THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
+    THContactBubble *contactBubble = [self.contacts objectForKey:wcr];
     [contactBubble removeFromSuperview];
     
     // Remove contact from memory
-    [self.contacts removeObjectForKey:contactKey];
-    [self.contactKeys removeObject:contactKey];
+    [self.contacts removeObjectForKey:wcr];
+    [self.contactKeys removeObject:wcr];
     
     // update layout
     [self layoutView];
-
+    
     [self.textView becomeFirstResponder];
     self.textView.hidden = NO;
     self.textView.text = @"";
@@ -192,7 +227,7 @@
 
 - (void)setPlaceholderString:(NSString *)placeholderString {
     self.placeholderLabel.text = placeholderString;
-
+    
     [self layoutView];
 }
 
@@ -202,20 +237,20 @@
 
 - (void)setViewPadding:(CGFloat)viewPadding {
     _viewPadding = viewPadding;
-
+    
     [self layoutView];
 }
 
 - (void)setBubbleColor:(THBubbleColor *)color selectedColor:(THBubbleColor *)selectedColor {
     self.bubbleColor = color;
     self.bubbleSelectedColor = selectedColor;
-
+    
     for (id contactKey in self.contactKeys){
         THContactBubble *contactBubble = (THContactBubble *)[self.contacts objectForKey:contactKey];
-
+        
         contactBubble.color = color;
         contactBubble.selectedColor = selectedColor;
-
+        
         // thid stuff reloads bubble
         if (contactBubble.isSelected)
             [contactBubble select];
@@ -241,36 +276,33 @@
 }
 
 - (void)removeContactBubble:(THContactBubble *)contactBubble {
-    id contact = [self contactForContactBubble:contactBubble];
-    if (contact == nil){
-        return;
+    WeakContactReference* wcr = [self contactForContactBubble:contactBubble];
+    
+    if ([self.delegate respondsToSelector:@selector(contactPickerDidRemoveContact:)] && wcr.contactReference != nil){
+        [self.delegate contactPickerDidRemoveContact:wcr.contactReference];
     }
     
-    if ([self.delegate respondsToSelector:@selector(contactPickerDidRemoveContact:)]){
-        [self.delegate contactPickerDidRemoveContact:[contact nonretainedObjectValue]];
-    }
-    
-    [self removeContactByKey:contact];
+    [self removeContactByKey:wcr];
 }
 
 - (void)removeContactByKey:(id)contactKey {
-  
-  // Remove contactBubble from view
-  THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
-  [contactBubble removeFromSuperview];
-  
-  // Remove contact from memory
-  [self.contacts removeObjectForKey:contactKey];
-  [self.contactKeys removeObject:contactKey];
-  
-  // update layout
-  [self layoutView];
-  
-  [self.textView becomeFirstResponder];
-  self.textView.hidden = NO;
-  self.textView.text = @"";
-  
-  [self scrollToBottomWithAnimation:NO];
+    
+    // Remove contactBubble from view
+    THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
+    [contactBubble removeFromSuperview];
+    
+    // Remove contact from memory
+    [self.contacts removeObjectForKey:contactKey];
+    [self.contactKeys removeObject:contactKey];
+    
+    // update layout
+    [self layoutView];
+    
+    [self.textView becomeFirstResponder];
+    self.textView.hidden = NO;
+    self.textView.text = @"";
+    
+    [self scrollToBottomWithAnimation:NO];
 }
 
 - (id)contactForContactBubble:(THContactBubble *)contactBubble {
@@ -292,7 +324,7 @@
     for (id contactKey in self.contactKeys){
         THContactBubble *contactBubble = (THContactBubble *)[self.contacts objectForKey:contactKey];
         CGRect bubbleFrame = contactBubble.frame;
-
+        
         if (CGRectIsNull(frameOfLastBubble)){ // first line
             bubbleFrame.origin.x = kHorizontalPadding;
             bubbleFrame.origin.y = kVerticalPadding + self.viewPadding;
@@ -336,11 +368,11 @@
     self.textView.frame = textViewFrame;
     self.textView.center = CGPointMake(self.textView.center.x, lineCount * self.lineHeight + self.lineHeight / 2 + kVerticalPadding + self.viewPadding);
     
-    // Add text view if it hasn't been added 
+    // Add text view if it hasn't been added
     if (self.textView.superview == nil){
         [self.scrollView addSubview:self.textView];
     }
-
+    
     // Hide the text view if we are limiting number of selected contacts to 1 and a contact has already been added
     if (self.limitToOne && self.contacts.count >= 1){
         self.textView.hidden = YES;
@@ -352,7 +384,7 @@
     CGFloat maxFrameHeight = 2 * self.lineHeight + 2 * self.viewPadding; // limit frame to two lines of content
     CGFloat newHeight = (lineCount + 1) * self.lineHeight + 2 * self.viewPadding;
     self.scrollView.contentSize = CGSizeMake(self.frame.size.width, newHeight);
-
+    
     // Adjust frame of view if necessary
     newHeight = (newHeight > maxFrameHeight) ? maxFrameHeight : newHeight;
     if (self.frame.size.height != newHeight){
@@ -378,7 +410,7 @@
     }
 }
 
-#pragma mark - UITextViewDelegate 
+#pragma mark - UITextViewDelegate
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
 {
@@ -394,11 +426,11 @@
         self.selectedContactBubble = [self.contacts objectForKey:[self.contactKeys lastObject]];
         [self.selectedContactBubble select];
     }
-
+    
     return YES;
 }
 
-- (void)textViewDidChange:(UITextView *)textView {    
+- (void)textViewDidChange:(UITextView *)textView {
     if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]){
         [self.delegate contactPickerTextViewDidChange:textView.text];
     }
@@ -461,14 +493,5 @@
         [self selectTextView];
     }
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end

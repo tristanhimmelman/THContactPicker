@@ -33,21 +33,26 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-//    UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonItemStyleBordered target:self action:@selector(removeAllContacts:)];
+    //    UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonItemStyleBordered target:self action:@selector(removeAllContacts:)];
     UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithTitle:@"Remove All" style:UIBarButtonItemStylePlain target:self action:@selector(removeAllContacts:)];
     self.navigationItem.rightBarButtonItem = barButton;
-  
+    
     // Initialize and add Contact Picker View
     self.contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 100)];
     self.contactPickerView.delegate = self;
     [self.contactPickerView setPlaceholderString:@"Who are you with?"];
     [self.view addSubview:self.contactPickerView];
     
-    // Fill the rest of the view with the table view 
+    // Fill the rest of the view with the table view
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.contactPickerView.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.contactPickerView.frame.size.height - kKeyboardHeight) style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.view insertSubview:self.tableView belowSubview:self.contactPickerView];
+    
+    if ([self respondsToSelector:@selector(setEdgesForExtendedLayout:)])
+    {
+        [self setEdgesForExtendedLayout:UIRectEdgeLeft | UIRectEdgeBottom | UIRectEdgeRight];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -97,7 +102,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
+    
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
     NSString *user = [self.filteredContacts objectAtIndex:indexPath.row];
@@ -126,7 +131,7 @@
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self contains[cd] %@", textViewText];
         self.filteredContacts = [self.contacts filteredArrayUsingPredicate:predicate];
     }
-    [self.tableView reloadData];    
+    [self.tableView reloadData];
 }
 
 - (void)contactPickerDidResize:(THContactPickerView *)contactPickerView {
@@ -135,7 +140,7 @@
 
 - (void)contactPickerDidRemoveContact:(id)contact {
     [self.selectedContacts removeObject:contact];
-
+    
     int index = [self.contacts indexOfObject:contact];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     cell.accessoryType = UITableViewCellAccessoryNone;
