@@ -125,8 +125,12 @@ static const CGFloat kPickerViewHeight = 100.0;
     return nil;
 }
 
+- (NSString *) titleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return nil;
+}
+
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
-    cell.textLabel.text = [self.filteredContacts objectAtIndex:indexPath.row];
+    cell.textLabel.text = [self titleForRowAtIndexPath:indexPath];
 }
 
 #pragma mark - UITableView Delegate and Datasource functions
@@ -164,6 +168,7 @@ static const CGFloat kPickerViewHeight = 100.0;
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
     id contact = [self.filteredContacts objectAtIndex:indexPath.row];
+    NSString *contactTilte = [self titleForRowAtIndexPath:indexPath];
     
     if ([self.privateSelectedContacts containsObject:contact]){ // contact is already selected so remove it from ContactPickerView
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -173,7 +178,7 @@ static const CGFloat kPickerViewHeight = 100.0;
         // Contact has not been selected, add it to THContactPickerView
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         [self.privateSelectedContacts addObject:contact];
-        [self.contactPickerView addContact:contact withName:contact];
+        [self.contactPickerView addContact:contact withName:contactTilte];
     }
     
     self.filteredContacts = self.contacts;

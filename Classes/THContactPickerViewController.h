@@ -17,5 +17,6 @@
 
 - (void)clearSelectedContacts:(id)sender;
 - (NSPredicate *)newFilteringPredicateWithText:(NSString *) text;
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+
+- (NSString *) titleForRowAtIndexPath:(NSIndexPath *)indexPath;
 @end
