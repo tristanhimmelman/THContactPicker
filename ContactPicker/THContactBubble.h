@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import "THBubbleColor.h"
+#import "THBubbleStyle.h"
 
 @class THContactBubble;
 
@@ -29,13 +29,13 @@
 @property (nonatomic, assign) id <THContactBubbleDelegate>delegate;
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
 
-@property (nonatomic, strong) THBubbleColor *color;
-@property (nonatomic, strong) THBubbleColor *selectedColor;
+@property (nonatomic, strong) THBubbleStyle *style;
+@property (nonatomic, strong) THBubbleStyle *selectedStyle;
 
 - (id)initWithName:(NSString *)name;
 - (id)initWithName:(NSString *)name
-             color:(THBubbleColor *)color
-     selectedColor:(THBubbleColor *)selectedColor;
+             style:(THBubbleStyle *)style
+     selectedStyle:(THBubbleStyle *)selectedStyle;
 
 - (void)select;
 - (void)unSelect;
