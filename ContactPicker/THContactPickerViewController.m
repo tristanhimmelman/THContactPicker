@@ -12,8 +12,6 @@
 
 @end
 
-#define kKeyboardHeight 216.0
-
 @implementation THContactPickerViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -33,38 +31,82 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-//    UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonItemStyleBordered target:self action:@selector(removeAllContacts:)];
-    UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithTitle:@"Remove All" style:UIBarButtonItemStylePlain target:self action:@selector(removeAllContacts:)];
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
+        [self setEdgesForExtendedLayout:UIRectEdgeBottom|UIRectEdgeLeft|UIRectEdgeRight];
+    }
+    
+    UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithTitle:@"Remove All"
+                                                                   style:UIBarButtonItemStylePlain
+                                                                  target:self
+                                                                  action:@selector(removeAllContacts:)];
     self.navigationItem.rightBarButtonItem = barButton;
   
     // Initialize and add Contact Picker View
     self.contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 100)];
+    self.contactPickerView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth;
     self.contactPickerView.delegate = self;
     [self.contactPickerView setPlaceholderString:@"Who are you with?"];
     [self.view addSubview:self.contactPickerView];
     
     // Fill the rest of the view with the table view 
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.contactPickerView.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.contactPickerView.frame.size.height - kKeyboardHeight) style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                   self.view.frame.size.width,
+                                                                   self.view.frame.size.height)
+                                                  style:UITableViewStylePlain];
+    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+    self.tableView.contentInset = UIEdgeInsetsMake(self.tableView.contentInset.top,
+                                                   self.tableView.contentInset.left,
+                                                   self.tableView.contentInset.bottom,
+                                                   self.tableView.contentInset.right);
+    
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.view insertSubview:self.tableView belowSubview:self.contactPickerView];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [self adjustTableViewFrame];
+    [self adjustTableViewInsets];
+    /*Register for keyboard notifications*/
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardDidShow:)
+                                                 name:UIKeyboardDidShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardDidHide:)
+                                                 name:UIKeyboardDidHideNotification
+                                               object:nil];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)viewWillDisappear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (void)adjustTableViewFrame {
-    CGRect frame = self.tableView.frame;
-    frame.origin.y = self.contactPickerView.frame.size.height;
-    frame.size.height = self.view.frame.size.height - self.contactPickerView.frame.size.height - kKeyboardHeight;
-    self.tableView.frame = frame;
+- (void) adjustTableViewInsetTop:(CGFloat) topInset bottom:(CGFloat) bottomInset {
+    self.tableView.contentInset = UIEdgeInsetsMake(topInset,
+                                                   self.tableView.contentInset.left,
+                                                   bottomInset,
+                                                   self.tableView.contentInset.right);
+    self.tableView.scrollIndicatorInsets = self.tableView.contentInset;
+}
+
+- (void) adjustTableViewInsetTop:(CGFloat) topInset {
+    [self adjustTableViewInsetTop:topInset
+                           bottom:self.tableView.contentInset.bottom];
+}
+
+- (void) adjustTableViewInsetBottom:(CGFloat) bottomInset {
+    [self adjustTableViewInsetTop:self.tableView.contentInset.top
+                           bottom:bottomInset];
+}
+
+- (void)adjustTableViewInsets {
+    [self adjustTableViewInsetTop:self.contactPickerView.frame.size.height];
 }
 
 #pragma mark - UITableView Delegate and Datasource functions
@@ -130,7 +172,7 @@
 }
 
 - (void)contactPickerDidResize:(THContactPickerView *)contactPickerView {
-    [self adjustTableViewFrame];
+    [self adjustTableViewInsets];
 }
 
 - (void)contactPickerDidRemoveContact:(id)contact {
@@ -149,4 +191,41 @@
     [self.tableView reloadData];
 }
 
+#pragma  mark - NSNotificationCenter
+
+- (void)keyboardDidShow:(NSNotification *) notification{
+    NSDictionary* info = [notification userInfo];
+    CGRect kbRect = [self.view convertRect:[[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:self.view.window];
+    [self adjustTableViewInsetBottom:self.view.bounds.size.height - kbRect.origin.y];
+}
+
+- (void)keyboardDidHide:(NSNotification *) notification{
+    NSDictionary* info = [notification userInfo];
+    CGRect kbRect = [self.view convertRect:[[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:self.view.window];
+    [self adjustTableViewInsetBottom:self.view.bounds.size.height - kbRect.origin.y];
+}
+
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
