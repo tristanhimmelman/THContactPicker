@@ -33,6 +33,6 @@
 - (void)setPlaceholderString:(NSString *)placeholderString;
 - (void)disableDropShadow;
 - (void)resignKeyboard;
-- (void)setBubbleColor:(THBubbleColor *)color selectedColor:(THBubbleColor *)selectedColor;
+- (void)setBubbleColor:(THBubbleStyle *)color selectedColor:(THBubbleStyle *)selectedColor;
     
 @end

@@ -20,9 +20,8 @@
 @property (nonatomic, assign) CGFloat lineHeight;
 @property (nonatomic, strong) UITextView *textView;
 
-@property (nonatomic, strong) THBubbleColor *bubbleColor;
-@property (nonatomic, strong) THBubbleColor *bubbleSelectedColor;
-
+@property (nonatomic, strong) THBubbleStyle *bubbleStyle;
+@property (nonatomic, strong) THBubbleStyle *bubbleSelectedStyle;
 @end
 
 @implementation THContactPickerView
@@ -63,6 +62,7 @@
     self.scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
     self.scrollView.scrollsToTop = NO;
     self.scrollView.delegate = self;
+    self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
     [self addSubview:self.scrollView];
     
     // Create TextView
@@ -129,8 +129,8 @@
     self.textView.text = @"";
     
     THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name
-                                                                     color:self.bubbleColor
-                                                             selectedColor:self.bubbleSelectedColor];
+                                                                     style:self.bubbleStyle
+                                                             selectedStyle:self.bubbleSelectedStyle];
     if (self.font != nil){
         [contactBubble setFont:self.font];
     }
@@ -206,15 +206,15 @@
     [self layoutView];
 }
 
-- (void)setBubbleColor:(THBubbleColor *)color selectedColor:(THBubbleColor *)selectedColor {
-    self.bubbleColor = color;
-    self.bubbleSelectedColor = selectedColor;
+- (void)setBubbleColor:(THBubbleStyle *)color selectedColor:(THBubbleStyle *)selectedColor {
+    self.bubbleStyle = color;
+    self.bubbleSelectedStyle = selectedColor;
 
     for (id contactKey in self.contactKeys){
         THContactBubble *contactBubble = (THContactBubble *)[self.contacts objectForKey:contactKey];
 
-        contactBubble.color = color;
-        contactBubble.selectedColor = selectedColor;
+        contactBubble.style = color;
+        contactBubble.selectedStyle = selectedColor;
 
         // thid stuff reloads bubble
         if (contactBubble.isSelected)
