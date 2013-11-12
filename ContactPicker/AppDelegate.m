@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "THContactPickerViewController.h"
+#import "THContactPickerViewControllerDemo.h"
 
 @implementation AppDelegate
 
@@ -18,7 +18,7 @@
     self.window.backgroundColor = [UIColor whiteColor];
     
     
-    THContactPickerViewController *contactPicker = [[THContactPickerViewController alloc] initWithNibName:@"THContactPickerViewController" bundle:nil];
+    THContactPickerViewController *contactPicker = [[THContactPickerViewControllerDemo alloc] initWithNibName:@"THContactPickerViewController" bundle:nil];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:contactPicker];
     
     self.window.rootViewController = navigationController;

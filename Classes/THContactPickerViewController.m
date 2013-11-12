@@ -7,51 +7,34 @@
 //
 
 #import "THContactPickerViewController.h"
+#import "THContactPickerView.h"
 
-@interface THContactPickerViewController ()
+static const CGFloat kPickerViewHeight = 100.0;
 
+@interface THContactPickerViewController () <THContactPickerDelegate>
+@property (nonatomic, strong) THContactPickerView *contactPickerView;
+@property (nonatomic, strong) NSMutableArray *privateSelectedContacts;
+@property (nonatomic, strong) NSArray *filteredContacts;
 @end
 
 @implementation THContactPickerViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-        self.title = @"Contacts";
-        self.contacts = [NSArray arrayWithObjects:@"Tristan Himmelman", @"John Himmelman", @"Nicole Robertson", @"Nicholas Barss", @"Andrew Sarasin", @"Mike Slon", @"Eric Salpeter", nil];
-        self.selectedContacts = [NSMutableArray array];
-        self.filteredContacts = self.contacts;
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
         [self setEdgesForExtendedLayout:UIRectEdgeBottom|UIRectEdgeLeft|UIRectEdgeRight];
     }
-    
-    UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithTitle:@"Remove All"
-                                                                   style:UIBarButtonItemStylePlain
-                                                                  target:self
-                                                                  action:@selector(removeAllContacts:)];
-    self.navigationItem.rightBarButtonItem = barButton;
   
     // Initialize and add Contact Picker View
-    self.contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 100)];
+    self.contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kPickerViewHeight)];
     self.contactPickerView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth;
     self.contactPickerView.delegate = self;
-    [self.contactPickerView setPlaceholderString:@"Who are you with?"];
+    [self.contactPickerView setPlaceholderString:_placeholderString];
     [self.view addSubview:self.contactPickerView];
     
     // Fill the rest of the view with the table view 
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                   self.view.frame.size.width,
-                                                                   self.view.frame.size.height)
+    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds
                                                   style:UITableViewStylePlain];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
     self.tableView.contentInset = UIEdgeInsetsMake(self.tableView.contentInset.top,
@@ -87,7 +70,25 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void) adjustTableViewInsetTop:(CGFloat) topInset bottom:(CGFloat) bottomInset {
+- (NSArray *)selectedContacts{
+    return [self.privateSelectedContacts copy];
+}
+
+#pragma mark - Publick properties
+
+- (NSArray *)filteredContacts {
+    if (!_filteredContacts) {
+        _filteredContacts = _contacts;
+    }
+    return _filteredContacts;
+}
+
+- (void) setPlaceholderString:(NSString *)placeholderString {
+    _placeholderString = placeholderString;
+    [self.contactPickerView setPlaceholderString:_placeholderString];
+}
+
+- (void)adjustTableViewInsetTop:(CGFloat) topInset bottom:(CGFloat) bottomInset {
     self.tableView.contentInset = UIEdgeInsetsMake(topInset,
                                                    self.tableView.contentInset.left,
                                                    bottomInset,
@@ -95,18 +96,37 @@
     self.tableView.scrollIndicatorInsets = self.tableView.contentInset;
 }
 
-- (void) adjustTableViewInsetTop:(CGFloat) topInset {
+#pragma mark - Private properties
+
+- (NSMutableArray *)privateSelectedContacts {
+    if (!_privateSelectedContacts) {
+        _privateSelectedContacts = [NSMutableArray array];
+    }
+    return _privateSelectedContacts;
+}
+
+#pragma mark - Provate methods
+
+- (void)adjustTableViewInsetTop:(CGFloat) topInset {
     [self adjustTableViewInsetTop:topInset
                            bottom:self.tableView.contentInset.bottom];
 }
 
-- (void) adjustTableViewInsetBottom:(CGFloat) bottomInset {
+- (void)adjustTableViewInsetBottom:(CGFloat) bottomInset {
     [self adjustTableViewInsetTop:self.tableView.contentInset.top
                            bottom:bottomInset];
 }
 
 - (void)adjustTableViewInsets {
     [self adjustTableViewInsetTop:self.contactPickerView.frame.size.height];
+}
+
+- (NSPredicate *)newFilteringPredicateWithText:(NSString *) text {
+    return nil;
+}
+
+- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
+    cell.textLabel.text = [self.filteredContacts objectAtIndex:indexPath.row];
 }
 
 #pragma mark - UITableView Delegate and Datasource functions
@@ -120,15 +140,16 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSString *cellIdentifier = @"ContactCell";
+    static NSString *cellIdentifier = @"ContactCell";
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil){
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    cell.textLabel.text = [self.filteredContacts objectAtIndex:indexPath.row];
     
-    if ([self.selectedContacts containsObject:[self.filteredContacts objectAtIndex:indexPath.row]]){
+    [self configureCell:cell atIndexPath:indexPath];
+    
+    if ([self.privateSelectedContacts containsObject:[self.filteredContacts objectAtIndex:indexPath.row]]){
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     } else {
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -142,17 +163,17 @@
 
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
-    NSString *user = [self.filteredContacts objectAtIndex:indexPath.row];
+    id contact = [self.filteredContacts objectAtIndex:indexPath.row];
     
-    if ([self.selectedContacts containsObject:user]){ // contact is already selected so remove it from ContactPickerView
+    if ([self.privateSelectedContacts containsObject:contact]){ // contact is already selected so remove it from ContactPickerView
         cell.accessoryType = UITableViewCellAccessoryNone;
-        [self.selectedContacts removeObject:user];
-        [self.contactPickerView removeContact:user];
+        [self.privateSelectedContacts removeObject:contact];
+        [self.contactPickerView removeContact:contact];
     } else {
         // Contact has not been selected, add it to THContactPickerView
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        [self.selectedContacts addObject:user];
-        [self.contactPickerView addContact:user withName:user];
+        [self.privateSelectedContacts addObject:contact];
+        [self.contactPickerView addContact:contact withName:contact];
     }
     
     self.filteredContacts = self.contacts;
@@ -165,10 +186,10 @@
     if ([textViewText isEqualToString:@""]){
         self.filteredContacts = self.contacts;
     } else {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self contains[cd] %@", textViewText];
+        NSPredicate *predicate = [self newFilteringPredicateWithText:textViewText];
         self.filteredContacts = [self.contacts filteredArrayUsingPredicate:predicate];
     }
-    [self.tableView reloadData];    
+    [self.tableView reloadData];
 }
 
 - (void)contactPickerDidResize:(THContactPickerView *)contactPickerView {
@@ -176,17 +197,16 @@
 }
 
 - (void)contactPickerDidRemoveContact:(id)contact {
-    [self.selectedContacts removeObject:contact];
+    [self.privateSelectedContacts removeObject:contact];
 
-    int index = [self.contacts indexOfObject:contact];
+    NSInteger index = [self.contacts indexOfObject:contact];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     cell.accessoryType = UITableViewCellAccessoryNone;
 }
 
-- (void)removeAllContacts:(id)sender
-{
+- (void)clearSelectedContacts:(id)sender {
     [self.contactPickerView removeAllContacts];
-    [self.selectedContacts removeAllObjects];
+    [self.privateSelectedContacts removeAllObjects];
     self.filteredContacts = self.contacts;
     [self.tableView reloadData];
 }
