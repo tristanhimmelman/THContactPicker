@@ -96,6 +96,10 @@ static const CGFloat kPickerViewHeight = 100.0;
     self.tableView.scrollIndicatorInsets = self.tableView.contentInset;
 }
 
+- (NSInteger) selectedCount {
+    return self.privateSelectedContacts.count;
+}
+
 #pragma mark - Private properties
 
 - (NSMutableArray *)privateSelectedContacts {
