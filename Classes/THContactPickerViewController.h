@@ -18,6 +18,6 @@
 
 - (void)clearSelectedContacts:(id)sender;
 - (NSPredicate *)newFilteringPredicateWithText:(NSString *) text;
-
+- (void) didChangeSelectedItems;
 - (NSString *) titleForRowAtIndexPath:(NSIndexPath *)indexPath;
 @end
