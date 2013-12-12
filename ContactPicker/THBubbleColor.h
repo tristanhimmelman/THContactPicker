@@ -14,8 +14,6 @@
 @property (nonatomic, strong) UIColor *gradientBottom;
 @property (nonatomic, strong) UIColor *border;
 
-- (id)initWithGradientTop:(UIColor *)gradientTop
-           gradientBottom:(UIColor *)gradientBottom
-                   border:(UIColor *)border;
+- (id)initWithGradientTop:(UIColor *)gradientTop gradientBottom:(UIColor *)gradientBottom border:(UIColor *)border;
 
 @end

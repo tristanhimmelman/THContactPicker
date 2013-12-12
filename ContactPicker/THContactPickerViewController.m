@@ -51,6 +51,19 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    CGFloat topOffset = 0;
+    if ([self respondsToSelector:@selector(topLayoutGuide)]){
+        topOffset = self.topLayoutGuide.length;
+    }
+    CGRect frame = self.contactPickerView.frame;
+    frame.origin.y = topOffset;
+    self.contactPickerView.frame = frame;
     [self adjustTableViewFrame];
 }
 
@@ -66,6 +79,8 @@
     frame.size.height = self.view.frame.size.height - self.contactPickerView.frame.size.height - kKeyboardHeight;
     self.tableView.frame = frame;
 }
+
+
 
 #pragma mark - UITableView Delegate and Datasource functions
 

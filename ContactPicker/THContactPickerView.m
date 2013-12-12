@@ -66,14 +66,16 @@
     [self addSubview:self.scrollView];
     
     // Create TextView
-    // It would make more sense to use a UITextField (because it doesnt wrap text), however, there is no easy way to detect the "delete" key press using a UITextField when there is no 
+    // It would make more sense to use a UITextField (because it doesnt wrap text), however, there is no easy way to detect the "delete" key press using a UITextField when there is no string in the field
     self.textView = [[UITextView alloc] init];
     self.textView.delegate = self;
     self.textView.font = contactBubble.label.font;
     self.textView.backgroundColor = [UIColor clearColor];
-    self.textView.contentInset = UIEdgeInsetsMake(-11, -6, 0, 0);
+    self.textView.contentInset = UIEdgeInsetsMake(-4, -2, 0, 0);
     self.textView.scrollEnabled = NO;
     self.textView.scrollsToTop = NO;
+    self.textView.clipsToBounds = NO;
+    self.textView.autocorrectionType = UITextAutocorrectionTypeNo;
     [self.textView becomeFirstResponder];
     
     // Add shadow to bottom border
@@ -128,9 +130,7 @@
     
     self.textView.text = @"";
     
-    THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name
-                                                                     color:self.bubbleColor
-                                                             selectedColor:self.bubbleSelectedColor];
+    THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name color:self.bubbleColor selectedColor:self.bubbleSelectedColor];
     if (self.font != nil){
         [contactBubble setFont:self.font];
     }
@@ -170,7 +170,6 @@
 }
 
 - (void)removeContact:(id)contact {
-  
     id contactKey = [NSValue valueWithNonretainedObject:contact];
     // Remove contactBubble from view
     THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
@@ -217,10 +216,11 @@
         contactBubble.selectedColor = selectedColor;
 
         // thid stuff reloads bubble
-        if (contactBubble.isSelected)
+        if (contactBubble.isSelected){
             [contactBubble select];
-        else
+        } else {
             [contactBubble unSelect];
+        }
     }
 }
 
@@ -254,7 +254,6 @@
 }
 
 - (void)removeContactByKey:(id)contactKey {
-  
   // Remove contactBubble from view
   THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
   [contactBubble removeFromSuperview];
@@ -292,7 +291,7 @@
     for (id contactKey in self.contactKeys){
         THContactBubble *contactBubble = (THContactBubble *)[self.contacts objectForKey:contactKey];
         CGRect bubbleFrame = contactBubble.frame;
-
+        
         if (CGRectIsNull(frameOfLastBubble)){ // first line
             bubbleFrame.origin.x = kHorizontalPadding;
             bubbleFrame.origin.y = kVerticalPadding + self.viewPadding;
@@ -300,7 +299,7 @@
             // Check if contact bubble will fit on the current line
             CGFloat width = bubbleFrame.size.width + 2 * kHorizontalPadding;
             if (self.frame.size.width - frameOfLastBubble.origin.x - frameOfLastBubble.size.width - width >= 0){ // add to the same line
-                // Place contact bubble just after last bubble on the same line
+                                                                                                                 // Place contact bubble just after last bubble on the same line
                 bubbleFrame.origin.x = frameOfLastBubble.origin.x + frameOfLastBubble.size.width + kHorizontalPadding * 2;
                 bubbleFrame.origin.y = frameOfLastBubble.origin.y;
             } else { // No space on line, jump to next line
@@ -319,28 +318,30 @@
     
     // Now add a textView after the comment bubbles
     CGFloat minWidth = kTextViewMinWidth + 2 * kHorizontalPadding;
-    CGRect textViewFrame = CGRectMake(0, 0, self.textView.frame.size.width, self.lineHeight - 2 * kVerticalPadding);
+    CGRect textViewFrame = CGRectMake(0, 0, self.textView.frame.size.width, self.lineHeight/* - 2 * kVerticalPadding*/);
     // Check if we can add the text field on the same line as the last contact bubble
     if (self.frame.size.width - frameOfLastBubble.origin.x - frameOfLastBubble.size.width - minWidth >= 0){ // add to the same line
         textViewFrame.origin.x = frameOfLastBubble.origin.x + frameOfLastBubble.size.width + kHorizontalPadding;
         textViewFrame.size.width = self.frame.size.width - textViewFrame.origin.x;
     } else { // place text view on the next line
         lineCount++;
-        if (self.contacts.count == 0){
-            lineCount = 0;
-        }
         
         textViewFrame.origin.x = kHorizontalPadding;
         textViewFrame.size.width = self.frame.size.width - 2 * kHorizontalPadding;
+        
+        if (self.contacts.count == 0){
+            lineCount = 0;
+            textViewFrame.origin.x = kHorizontalPadding;
+        }
     }
+    textViewFrame.origin.y = lineCount * self.lineHeight + kVerticalPadding + self.viewPadding;
     self.textView.frame = textViewFrame;
-    self.textView.center = CGPointMake(self.textView.center.x, lineCount * self.lineHeight + self.lineHeight / 2 + kVerticalPadding + self.viewPadding);
-    
-    // Add text view if it hasn't been added 
+
+    // Add text view if it hasn't been added
     if (self.textView.superview == nil){
         [self.scrollView addSubview:self.textView];
     }
-
+    
     // Hide the text view if we are limiting number of selected contacts to 1 and a contact has already been added
     if (self.limitToOne && self.contacts.count >= 1){
         self.textView.hidden = YES;
@@ -351,8 +352,8 @@
     CGRect frame = self.bounds;
     CGFloat maxFrameHeight = 2 * self.lineHeight + 2 * self.viewPadding; // limit frame to two lines of content
     CGFloat newHeight = (lineCount + 1) * self.lineHeight + 2 * self.viewPadding;
-    self.scrollView.contentSize = CGSizeMake(self.frame.size.width, newHeight);
-
+    self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, newHeight);
+    
     // Adjust frame of view if necessary
     newHeight = (newHeight > maxFrameHeight) ? maxFrameHeight : newHeight;
     if (self.frame.size.height != newHeight){

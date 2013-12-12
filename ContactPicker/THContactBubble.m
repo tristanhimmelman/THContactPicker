@@ -13,13 +13,8 @@
 #define kHorizontalPadding 10
 #define kVerticalPadding 2
 
-#define kColorGradientTop [UIColor colorWithRed:219.0/255.0 green:229.0/255.0 blue:249.0/255.0 alpha:1.0]
-#define kColorGradientBottom [UIColor colorWithRed:188.0/255.0 green:205.0/255.0 blue:242.0/255.0 alpha:1.0]
-#define kColorBorder [UIColor colorWithRed:127.0/255.0 green:127.0/255.0 blue:218.0/255.0 alpha:1.0]
-
-#define kColorSelectedGradientTop [UIColor colorWithRed:79.0/255.0 green:132.0/255.0 blue:255.0/255.0 alpha:1.0]
-#define kColorSelectedGradientBottom [UIColor colorWithRed:73.0/255.0 green:58.0/255.0 blue:242.0/255.0 alpha:1.0]
-#define kColorSelectedBorder [UIColor colorWithRed:56.0/255.0 green:0/255.0 blue:233.0/255.0 alpha:1.0]
+#define kBubbleColor                      [UIColor colorWithRed:24.0/255.0 green:134.0/255.0 blue:242.0/255.0 alpha:1.0]
+#define kBubbleColorSelected              [UIColor colorWithRed:151.0/255.0f green:199.0/255.0f blue:250.0/255.0f alpha:1.0]
 
 - (id)initWithName:(NSString *)name {
     if ([self initWithName:name color:nil selectedColor:nil]) {
@@ -28,28 +23,23 @@
     return self;
 }
 
-- (id)initWithName:(NSString *)name
-             color:(THBubbleColor *)color
-     selectedColor:(THBubbleColor *)selectedColor {
+- (id)initWithName:(NSString *)name color:(THBubbleColor *)color selectedColor:(THBubbleColor *)selectedColor {
     self = [super init];
     if (self){
         self.name = name;
         self.isSelected = NO;
 
-        if (! color)
-            color = [[THBubbleColor alloc] initWithGradientTop:kColorGradientTop
-                                                gradientBottom:kColorGradientBottom
-                                                        border:kColorBorder];
+        if (color == nil){
+            color = [[THBubbleColor alloc] initWithGradientTop:kBubbleColor gradientBottom:kBubbleColor border:kBubbleColor];
+        }
 
-        if (! selectedColor)
-            selectedColor = [[THBubbleColor alloc] initWithGradientTop:kColorSelectedGradientTop
-                                                        gradientBottom:kColorSelectedGradientBottom
-                                                                border:kColorSelectedBorder];
+        if (selectedColor == nil){
+            selectedColor = [[THBubbleColor alloc] initWithGradientTop:kBubbleColorSelected gradientBottom:kBubbleColorSelected border:kBubbleColorSelected];
+        }
         
         self.color = color;
         self.selectedColor = selectedColor;
 
-        
         [self setupView];
     }
     return self;
@@ -132,7 +122,7 @@
     
     self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[self.color.gradientTop CGColor], (id)[self.color.gradientBottom CGColor], nil];
     
-    self.label.textColor = [UIColor blackColor];
+    self.label.textColor = [UIColor whiteColor];
 
     [self setNeedsDisplay];
     self.isSelected = NO;

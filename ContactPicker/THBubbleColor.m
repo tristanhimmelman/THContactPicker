@@ -10,9 +10,7 @@
 
 @implementation THBubbleColor
 
-- (id)initWithGradientTop:(UIColor *)gradientTop
-           gradientBottom:(UIColor *)gradientBottom
-                   border:(UIColor *)border {
+- (id)initWithGradientTop:(UIColor *)gradientTop gradientBottom:(UIColor *)gradientBottom border:(UIColor *)border {
     if (self = [super init]) {
         self.gradientTop = gradientTop;
         self.gradientBottom = gradientBottom;
