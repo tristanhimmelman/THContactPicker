@@ -96,6 +96,24 @@ static const CGFloat kPickerViewHeight = 100.0;
     self.tableView.scrollIndicatorInsets = self.tableView.contentInset;
 }
 
+- (NSInteger) selectedCount {
+    return self.privateSelectedContacts.count;
+}
+
+#pragma mark - Publick methods
+
+- (NSPredicate *)newFilteringPredicateWithText:(NSString *) text {
+    return nil;
+}
+
+- (NSString *) titleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return nil;
+}
+
+- (void) didChangeSelectedItems {
+    
+}
+
 #pragma mark - Private properties
 
 - (NSMutableArray *)privateSelectedContacts {
@@ -105,7 +123,7 @@ static const CGFloat kPickerViewHeight = 100.0;
     return _privateSelectedContacts;
 }
 
-#pragma mark - Provate methods
+#pragma mark - Private methods
 
 - (void)adjustTableViewInsetTop:(CGFloat) topInset {
     [self adjustTableViewInsetTop:topInset
@@ -119,14 +137,6 @@ static const CGFloat kPickerViewHeight = 100.0;
 
 - (void)adjustTableViewInsets {
     [self adjustTableViewInsetTop:self.contactPickerView.frame.size.height];
-}
-
-- (NSPredicate *)newFilteringPredicateWithText:(NSString *) text {
-    return nil;
-}
-
-- (NSString *) titleForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return nil;
 }
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
@@ -182,6 +192,7 @@ static const CGFloat kPickerViewHeight = 100.0;
     }
     
     self.filteredContacts = self.contacts;
+    [self didChangeSelectedItems];
     [self.tableView reloadData];
 }
 
@@ -207,12 +218,14 @@ static const CGFloat kPickerViewHeight = 100.0;
     NSInteger index = [self.contacts indexOfObject:contact];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     cell.accessoryType = UITableViewCellAccessoryNone;
+    [self didChangeSelectedItems];
 }
 
 - (void)clearSelectedContacts:(id)sender {
     [self.contactPickerView removeAllContacts];
     [self.privateSelectedContacts removeAllObjects];
     self.filteredContacts = self.contacts;
+    [self didChangeSelectedItems];
     [self.tableView reloadData];
 }
 
