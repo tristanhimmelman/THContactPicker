@@ -96,6 +96,24 @@ static const CGFloat kPickerViewHeight = 100.0;
     self.tableView.scrollIndicatorInsets = self.tableView.contentInset;
 }
 
+- (NSInteger) selectedCount {
+    return self.privateSelectedContacts.count;
+}
+
+#pragma mark - Publick methods
+
+- (NSPredicate *)newFilteringPredicateWithText:(NSString *) text {
+    return nil;
+}
+
+- (NSString *) titleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return nil;
+}
+
+- (void) didChangeSelectedItems {
+    
+}
+
 #pragma mark - Private properties
 
 - (NSMutableArray *)privateSelectedContacts {
@@ -105,7 +123,7 @@ static const CGFloat kPickerViewHeight = 100.0;
     return _privateSelectedContacts;
 }
 
-#pragma mark - Provate methods
+#pragma mark - Private methods
 
 - (void)adjustTableViewInsetTop:(CGFloat) topInset {
     [self adjustTableViewInsetTop:topInset
@@ -121,12 +139,8 @@ static const CGFloat kPickerViewHeight = 100.0;
     [self adjustTableViewInsetTop:self.contactPickerView.frame.size.height];
 }
 
-- (NSPredicate *)newFilteringPredicateWithText:(NSString *) text {
-    return nil;
-}
-
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
-    cell.textLabel.text = [self.filteredContacts objectAtIndex:indexPath.row];
+    cell.textLabel.text = [self titleForRowAtIndexPath:indexPath];
 }
 
 #pragma mark - UITableView Delegate and Datasource functions
@@ -164,6 +178,7 @@ static const CGFloat kPickerViewHeight = 100.0;
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
     id contact = [self.filteredContacts objectAtIndex:indexPath.row];
+    NSString *contactTilte = [self titleForRowAtIndexPath:indexPath];
     
     if ([self.privateSelectedContacts containsObject:contact]){ // contact is already selected so remove it from ContactPickerView
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -173,10 +188,11 @@ static const CGFloat kPickerViewHeight = 100.0;
         // Contact has not been selected, add it to THContactPickerView
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         [self.privateSelectedContacts addObject:contact];
-        [self.contactPickerView addContact:contact withName:contact];
+        [self.contactPickerView addContact:contact withName:contactTilte];
     }
     
     self.filteredContacts = self.contacts;
+    [self didChangeSelectedItems];
     [self.tableView reloadData];
 }
 
@@ -202,12 +218,14 @@ static const CGFloat kPickerViewHeight = 100.0;
     NSInteger index = [self.contacts indexOfObject:contact];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     cell.accessoryType = UITableViewCellAccessoryNone;
+    [self didChangeSelectedItems];
 }
 
 - (void)clearSelectedContacts:(id)sender {
     [self.contactPickerView removeAllContacts];
     [self.privateSelectedContacts removeAllObjects];
     self.filteredContacts = self.contacts;
+    [self didChangeSelectedItems];
     [self.tableView reloadData];
 }
 
