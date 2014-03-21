@@ -131,6 +131,8 @@
     THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name
                                                                      style:self.bubbleStyle
                                                              selectedStyle:self.bubbleSelectedStyle];
+    
+    contactBubble.keyboardAppearance = self.keyboardAppearance;
     if (self.font != nil){
         [contactBubble setFont:self.font];
     }
@@ -206,7 +208,7 @@
     [self layoutView];
 }
 
-- (void)setBubbleColor:(THBubbleStyle *)color selectedColor:(THBubbleStyle *)selectedColor {
+- (void)setBubbleStyle:(THBubbleStyle *)color selectedStyle:(THBubbleStyle *)selectedColor {
     self.bubbleStyle = color;
     self.bubbleSelectedStyle = selectedColor;
 
@@ -225,6 +227,10 @@
 }
 
 #pragma mark - Private functions
+
+- (BOOL) becomeFirstResponder {
+    return [self.textView becomeFirstResponder];
+}
 
 - (void)scrollToBottomWithAnimation:(BOOL)animated {
     if (animated){
@@ -462,13 +468,17 @@
     }
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
+#pragma mark - UITextInputTraits
+
+- (void) setKeyboardAppearance:(UIKeyboardAppearance)keyboardAppearance {
+    self.textView.keyboardAppearance = keyboardAppearance;
+    for (THContactBubble *bubble in self.contacts) {
+        bubble.keyboardAppearance = keyboardAppearance;
+    }
 }
-*/
+
+- (UIKeyboardAppearance) keyboardAppearance {
+    return self.textView.keyboardAppearance;
+}
 
 @end

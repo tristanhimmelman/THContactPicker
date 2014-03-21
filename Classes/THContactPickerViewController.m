@@ -7,17 +7,16 @@
 //
 
 #import "THContactPickerViewController.h"
-#import "THContactPickerView.h"
 
 static const CGFloat kPickerViewHeight = 100.0;
 
 @interface THContactPickerViewController () <THContactPickerDelegate>
-@property (nonatomic, strong) THContactPickerView *contactPickerView;
 @property (nonatomic, strong) NSMutableArray *privateSelectedContacts;
 @property (nonatomic, strong) NSArray *filteredContacts;
 @end
 
 @implementation THContactPickerViewController
+@synthesize contactPickerView = _contactPickerView;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -27,11 +26,11 @@ static const CGFloat kPickerViewHeight = 100.0;
     }
   
     // Initialize and add Contact Picker View
-    self.contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kPickerViewHeight)];
-    self.contactPickerView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth;
-    self.contactPickerView.delegate = self;
-    [self.contactPickerView setPlaceholderString:_placeholderString];
-    [self.view addSubview:self.contactPickerView];
+    _contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kPickerViewHeight)];
+    _contactPickerView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth;
+    _contactPickerView.delegate = self;
+    [_contactPickerView setPlaceholderString:_placeholderString];
+    [self.view addSubview:_contactPickerView];
     
     // Fill the rest of the view with the table view 
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds

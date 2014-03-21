@@ -20,7 +20,7 @@
 
 @end
 
-@interface THContactBubble : UIView <UITextViewDelegate>
+@interface THContactBubble : UIView <UITextViewDelegate, UITextInputTraits>
 
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) UILabel *label;

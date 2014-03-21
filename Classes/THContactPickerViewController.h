@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "THContactPickerView.h"
 
 @interface THContactPickerViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@property (nonatomic, readonly) THContactPickerView *contactPickerView;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *contacts;
 @property (nonatomic, readonly) NSArray *selectedContacts;
