@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "THContactPickerView.h"
+#import "THContactPickerTableViewCell.h"
 
 @interface THContactPickerViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, THContactPickerDelegate>
 
