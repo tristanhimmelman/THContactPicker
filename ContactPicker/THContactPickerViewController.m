@@ -87,6 +87,8 @@ UIBarButtonItem *barButton;
         {
             THContact *contact = [[THContact alloc] init];
             ABRecordRef contactPerson = (__bridge ABRecordRef)allContacts[i];
+            contact.recordId = ABRecordGetRecordID(contactPerson);
+
             // Get first and last names
             NSString *firstName = (__bridge_transfer NSString*)ABRecordCopyValue(contactPerson, kABPersonFirstNameProperty);
             NSString *lastName = (__bridge_transfer NSString*)ABRecordCopyValue(contactPerson, kABPersonLastNameProperty);
@@ -129,6 +131,44 @@ UIBarButtonItem *barButton;
     }
 }
 
+- (void) refreshContacts
+{
+    for (THContact* contact in self.contacts)
+    {
+        [self refreshContact: contact];
+    }
+    [self.tableView reloadData];
+}
+
+- (void) refreshContact:(THContact*)contact
+{
+    
+    ABRecordRef contactPerson = ABAddressBookGetPersonWithRecordID(self.addressBookRef, (ABRecordID)contact.recordId);
+    contact.recordId = ABRecordGetRecordID(contactPerson);
+    
+    // Get first and last names
+    NSString *firstName = (__bridge_transfer NSString*)ABRecordCopyValue(contactPerson, kABPersonFirstNameProperty);
+    NSString *lastName = (__bridge_transfer NSString*)ABRecordCopyValue(contactPerson, kABPersonLastNameProperty);
+    
+    // Set Contact properties
+    contact.firstName = firstName;
+    contact.lastName = lastName;
+    
+    // Get mobile number
+    ABMultiValueRef phonesRef = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
+    contact.phone = [self getMobilePhoneProperty:phonesRef];
+    if(phonesRef) {
+        CFRelease(phonesRef);
+    }
+    
+    // Get image if it exists
+    NSData  *imgData = (__bridge_transfer NSData *)ABPersonCopyImageData(contactPerson);
+    contact.image = [UIImage imageWithData:imgData];
+    if (!contact.image) {
+        contact.image = [UIImage imageNamed:@"icon-avatar-60x60"];
+    }
+}
+
 - (NSString *)getMobilePhoneProperty:(ABMultiValueRef)phonesRef
 {
     for (int i=0; i < ABMultiValueGetCount(phonesRef); i++) {
@@ -157,7 +197,9 @@ UIBarButtonItem *barButton;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self refreshContacts];
+    });
 }
 
 - (void)viewDidLayoutSubviews {
@@ -258,6 +300,7 @@ UIBarButtonItem *barButton;
     cell.accessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
     // Set a target and selector for the accessoryView UIControlEventTouchUpInside
     [(UIButton *)cell.accessoryView addTarget:self action:@selector(viewContactDetail:) forControlEvents:UIControlEventTouchUpInside];
+    cell.accessoryView.tag = contact.recordId; //so we know which ABRecord in the IBAction method
     
     // // For custom accessory view button use this.
     //    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -314,7 +357,7 @@ UIBarButtonItem *barButton;
     }
     
     // Update window title
-    self.title = [NSString stringWithFormat:@"Add Members (%d)", self.selectedContacts.count];
+    self.title = [NSString stringWithFormat:@"Add Members (%lu)", (unsigned long)self.selectedContacts.count];
     
     // Set checkbox image
     checkboxImageView.image = image;
@@ -343,7 +386,7 @@ UIBarButtonItem *barButton;
 - (void)contactPickerDidRemoveContact:(id)contact {
     [self.selectedContacts removeObject:contact];
     
-    int index = [self.contacts indexOfObject:contact];
+    NSUInteger index = [self.contacts indexOfObject:contact];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     //cell.accessoryType = UITableViewCellAccessoryNone;
     
@@ -363,7 +406,7 @@ UIBarButtonItem *barButton;
     checkboxImageView.image = image;
     
     // Update window title
-    self.title = [NSString stringWithFormat:@"Add Members (%d)", self.selectedContacts.count];
+    self.title = [NSString stringWithFormat:@"Add Members (%lu)", (unsigned long)self.selectedContacts.count];
 }
 
 - (void)removeAllContacts:(id)sender
@@ -373,19 +416,28 @@ UIBarButtonItem *barButton;
     self.filteredContacts = self.contacts;
     [self.tableView reloadData];
 }
+#pragma mark ABPersonViewControllerDelegate
 
-// This opens the contact details view: THContactPickerDetailViewController
-// TODO: send contact object
-- (IBAction)viewContactDetail:(id)sender {
-    NSLog(@"Opening Contact Details!");
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Contact Details!"
-                                                        message:@"Implement a view and Navigate there."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"Ok"
-                                              otherButtonTitles:nil];
-    [alertView show];
+- (BOOL)personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
+{
+    return YES;
 }
 
+
+// This opens the apple contact details view: ABPersonViewController
+//TODO: make a THContactPickerDetailViewController
+- (IBAction)viewContactDetail:(UIButton*)sender {
+    ABRecordID personId = (ABRecordID)sender.tag;
+    ABPersonViewController *view = [[ABPersonViewController alloc] init];
+    view.addressBook = self.addressBookRef;
+    view.personViewDelegate = self;
+    view.displayedPerson = ABAddressBookGetPersonWithRecordID(self.addressBookRef, personId);
+
+    
+    [self.navigationController pushViewController:view animated:YES];
+}
+
+// TODO: send contact object
 - (void)done:(id)sender
 {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Done!"
