@@ -10,6 +10,8 @@
 
 static const CGFloat kPickerViewHeight = 100.0;
 
+NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
+
 @interface THContactPickerViewController () <THContactPickerDelegate>
 @property (nonatomic, strong) NSMutableArray *privateSelectedContacts;
 @property (nonatomic, strong) NSArray *filteredContacts;
@@ -153,11 +155,9 @@ static const CGFloat kPickerViewHeight = 100.0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *cellIdentifier = @"ContactCell";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:THContactPickerContactCellReuseID];
     if (cell == nil){
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:THContactPickerContactCellReuseID];
     }
     
     [self configureCell:cell atIndexPath:indexPath];

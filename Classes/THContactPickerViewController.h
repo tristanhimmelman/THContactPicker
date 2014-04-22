@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "THContactPickerView.h"
 
+extern NSString *THContactPickerContactCellReuseID;
+
 @interface THContactPickerViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, readonly) THContactPickerView *contactPickerView;
 @property (nonatomic, strong) UITableView *tableView;
