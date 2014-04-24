@@ -44,7 +44,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code        
+        // Initialization code
         [self setup];
     }
     return self;
@@ -76,7 +76,7 @@
     self.textView.scrollsToTop = NO;
     self.textView.clipsToBounds = NO;
     self.textView.autocorrectionType = UITextAutocorrectionTypeNo;
-    [self.textView becomeFirstResponder];
+    //[self.textView becomeFirstResponder];
     
     // Add shadow to bottom border
     self.backgroundColor = [UIColor whiteColor];
@@ -149,24 +149,24 @@
 
 - (void)selectTextView {
     self.textView.hidden = NO;
-    [self.textView becomeFirstResponder];
+    //[self.textView becomeFirstResponder];
 }
 
 - (void)removeAllContacts
 {
     for(id contact in [self.contacts allKeys]){
-      THContactBubble *contactBubble = [self.contacts objectForKey:contact];
-      [contactBubble removeFromSuperview];
+        THContactBubble *contactBubble = [self.contacts objectForKey:contact];
+        [contactBubble removeFromSuperview];
     }
     [self.contacts removeAllObjects];
     [self.contactKeys removeAllObjects];
-  
+    
     // update layout
     [self layoutView];
-  
+    
     self.textView.hidden = NO;
     self.textView.text = @"";
-  
+    
 }
 
 - (void)removeContact:(id)contact {
@@ -181,8 +181,8 @@
     
     // update layout
     [self layoutView];
-
-    [self.textView becomeFirstResponder];
+    
+    //[self.textView becomeFirstResponder];
     self.textView.hidden = NO;
     self.textView.text = @"";
     
@@ -191,7 +191,7 @@
 
 - (void)setPlaceholderString:(NSString *)placeholderString {
     self.placeholderLabel.text = placeholderString;
-
+    
     [self layoutView];
 }
 
@@ -201,20 +201,20 @@
 
 - (void)setViewPadding:(CGFloat)viewPadding {
     _viewPadding = viewPadding;
-
+    
     [self layoutView];
 }
 
 - (void)setBubbleColor:(THBubbleColor *)color selectedColor:(THBubbleColor *)selectedColor {
     self.bubbleColor = color;
     self.bubbleSelectedColor = selectedColor;
-
+    
     for (id contactKey in self.contactKeys){
         THContactBubble *contactBubble = (THContactBubble *)[self.contacts objectForKey:contactKey];
-
+        
         contactBubble.color = color;
         contactBubble.selectedColor = selectedColor;
-
+        
         // thid stuff reloads bubble
         if (contactBubble.isSelected){
             [contactBubble select];
@@ -254,22 +254,22 @@
 }
 
 - (void)removeContactByKey:(id)contactKey {
-  // Remove contactBubble from view
-  THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
-  [contactBubble removeFromSuperview];
-  
-  // Remove contact from memory
-  [self.contacts removeObjectForKey:contactKey];
-  [self.contactKeys removeObject:contactKey];
-  
-  // update layout
-  [self layoutView];
-  
-  [self.textView becomeFirstResponder];
-  self.textView.hidden = NO;
-  self.textView.text = @"";
-  
-  [self scrollToBottomWithAnimation:NO];
+    // Remove contactBubble from view
+    THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
+    [contactBubble removeFromSuperview];
+    
+    // Remove contact from memory
+    [self.contacts removeObjectForKey:contactKey];
+    [self.contactKeys removeObject:contactKey];
+    
+    // update layout
+    [self layoutView];
+    
+    //[self.textView becomeFirstResponder];
+    self.textView.hidden = NO;
+    self.textView.text = @"";
+    
+    [self scrollToBottomWithAnimation:NO];
 }
 
 - (id)contactForContactBubble:(THContactBubble *)contactBubble {
@@ -299,7 +299,7 @@
             // Check if contact bubble will fit on the current line
             CGFloat width = bubbleFrame.size.width + 2 * kHorizontalPadding;
             if (self.frame.size.width - frameOfLastBubble.origin.x - frameOfLastBubble.size.width - width >= 0){ // add to the same line
-                                                                                                                 // Place contact bubble just after last bubble on the same line
+                // Place contact bubble just after last bubble on the same line
                 bubbleFrame.origin.x = frameOfLastBubble.origin.x + frameOfLastBubble.size.width + kHorizontalPadding * 2;
                 bubbleFrame.origin.y = frameOfLastBubble.origin.y;
             } else { // No space on line, jump to next line
@@ -336,7 +336,7 @@
     }
     textViewFrame.origin.y = lineCount * self.lineHeight + kVerticalPadding + self.viewPadding;
     self.textView.frame = textViewFrame;
-
+    
     // Add text view if it hasn't been added
     if (self.textView.superview == nil){
         [self.scrollView addSubview:self.textView];
@@ -379,7 +379,7 @@
     }
 }
 
-#pragma mark - UITextViewDelegate 
+#pragma mark - UITextViewDelegate
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
 {
@@ -395,11 +395,11 @@
         self.selectedContactBubble = [self.contacts objectForKey:[self.contactKeys lastObject]];
         [self.selectedContactBubble select];
     }
-
+    
     return YES;
 }
 
-- (void)textViewDidChange:(UITextView *)textView {    
+- (void)textViewDidChange:(UITextView *)textView {
     if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]){
         [self.delegate contactPickerTextViewDidChange:textView.text];
     }
@@ -464,12 +464,12 @@
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
 
 @end
