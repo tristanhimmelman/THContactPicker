@@ -18,7 +18,7 @@
     self.window.backgroundColor = [UIColor whiteColor];
     
     
-    THContactPickerViewController *contactPicker = [[THContactPickerViewControllerDemo alloc] initWithNibName:@"THContactPickerViewController" bundle:nil];
+    THContactPickerViewControllerDemo *contactPicker = [[THContactPickerViewControllerDemo alloc] initWithNibName:@"THContactPickerViewControllerDemo" bundle:nil];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:contactPicker];
     
     self.window.rootViewController = navigationController;

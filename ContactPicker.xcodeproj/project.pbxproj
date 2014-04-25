@@ -22,7 +22,6 @@
 		6B3B2DF9183267B900798513 /* THBubbleStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DF2183267B900798513 /* THBubbleStyle.m */; };
 		6B3B2DFA183267B900798513 /* THContactBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DF4183267B900798513 /* THContactBubble.m */; };
 		6B3B2DFB183267B900798513 /* THContactPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DF6183267B900798513 /* THContactPickerView.m */; };
-		6B3B2DFC183267B900798513 /* THContactPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DF8183267B900798513 /* THContactPickerViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,8 +48,6 @@
 		6B3B2DF4183267B900798513 /* THContactBubble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactBubble.m; sourceTree = "<group>"; };
 		6B3B2DF5183267B900798513 /* THContactPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactPickerView.h; sourceTree = "<group>"; };
 		6B3B2DF6183267B900798513 /* THContactPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactPickerView.m; sourceTree = "<group>"; };
-		6B3B2DF7183267B900798513 /* THContactPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactPickerViewController.h; sourceTree = "<group>"; };
-		6B3B2DF8183267B900798513 /* THContactPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactPickerViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,20 +99,10 @@
 				6B3B2DF0183267B900798513 /* Classes */,
 				29A71BF616448250005286F1 /* AppDelegate.h */,
 				29A71BF716448250005286F1 /* AppDelegate.m */,
-				84F796461670C79500A8965D /* THBubbleColor.h */,
-				84F796471670C79500A8965D /* THBubbleColor.m */,
-				29A71C1616448473005286F1 /* THContactBubble.h */,
-				29A71C1716448473005286F1 /* THContactBubble.m */,
-				29A71C131644834B005286F1 /* THContactPickerView.h */,
-				29A71C141644834B005286F1 /* THContactPickerView.m */,
-				29A71C0E164482BB005286F1 /* THContactPickerViewController.h */,
-				29A71C0F164482BB005286F1 /* THContactPickerViewController.m */,
-				29A71C10164482BB005286F1 /* THContactPickerViewController.xib */,
 				29A71BEE1644824F005286F1 /* Supporting Files */,
 				6B3B2DEB183260AC00798513 /* THContactPickerViewControllerDemo.h */,
 				6B3B2DEC183260AC00798513 /* THContactPickerViewControllerDemo.m */,
 				6B3B2DEE1832679900798513 /* THContactPickerViewControllerDemo.xib */,
-
 			);
 			path = ContactPicker;
 			sourceTree = "<group>";
@@ -143,8 +130,6 @@
 				6B3B2DF4183267B900798513 /* THContactBubble.m */,
 				6B3B2DF5183267B900798513 /* THContactPickerView.h */,
 				6B3B2DF6183267B900798513 /* THContactPickerView.m */,
-				6B3B2DF7183267B900798513 /* THContactPickerViewController.h */,
-				6B3B2DF8183267B900798513 /* THContactPickerViewController.m */,
 			);
 			path = Classes;
 			sourceTree = SOURCE_ROOT;
@@ -175,7 +160,7 @@
 		29A71BDA1644824F005286F1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Tristan Himmelman";
 			};
 			buildConfigurationList = 29A71BDD1644824F005286F1 /* Build configuration list for PBXProject "ContactPicker" */;
@@ -221,7 +206,6 @@
 				29A71BF816448250005286F1 /* AppDelegate.m in Sources */,
 				6B3B2DED183260AC00798513 /* THContactPickerViewControllerDemo.m in Sources */,
 				6B3B2DF9183267B900798513 /* THBubbleStyle.m in Sources */,
-				6B3B2DFC183267B900798513 /* THContactPickerViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +246,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
