@@ -43,6 +43,12 @@
     [self.contactPickerView setPlaceholderString:@"Who are you with?"];
     [self.view addSubview:self.contactPickerView];
     
+    CALayer *layer = [self.contactPickerView layer];
+    [layer setShadowColor:[[UIColor colorWithRed:225.0/255.0 green:226.0/255.0 blue:228.0/255.0 alpha:1] CGColor]];
+    [layer setShadowOffset:CGSizeMake(0, 2)];
+    [layer setShadowOpacity:1];
+    [layer setShadowRadius:1.0f];
+
     // Fill the rest of the view with the table view 
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.contactPickerView.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.contactPickerView.frame.size.height - kKeyboardHeight) style:UITableViewStylePlain];
     self.tableView.delegate = self;

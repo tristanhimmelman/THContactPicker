@@ -33,9 +33,7 @@
 @property (nonatomic, strong) THBubbleColor *selectedColor;
 
 - (id)initWithName:(NSString *)name;
-- (id)initWithName:(NSString *)name
-             color:(THBubbleColor *)color
-     selectedColor:(THBubbleColor *)selectedColor;
+- (id)initWithName:(NSString *)name color:(THBubbleColor *)color selectedColor:(THBubbleColor *)selectedColor;
 
 - (void)select;
 - (void)unSelect;

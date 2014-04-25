@@ -98,6 +98,8 @@
 			children = (
 				29A71BF616448250005286F1 /* AppDelegate.h */,
 				29A71BF716448250005286F1 /* AppDelegate.m */,
+				84F796461670C79500A8965D /* THBubbleColor.h */,
+				84F796471670C79500A8965D /* THBubbleColor.m */,
 				29A71C1616448473005286F1 /* THContactBubble.h */,
 				29A71C1716448473005286F1 /* THContactBubble.m */,
 				29A71C131644834B005286F1 /* THContactPickerView.h */,
@@ -106,8 +108,6 @@
 				29A71C0E164482BB005286F1 /* THContactPickerViewController.h */,
 				29A71C0F164482BB005286F1 /* THContactPickerViewController.m */,
 				29A71C10164482BB005286F1 /* THContactPickerViewController.xib */,
-				84F796461670C79500A8965D /* THBubbleColor.h */,
-				84F796471670C79500A8965D /* THBubbleColor.m */,
 			);
 			path = ContactPicker;
 			sourceTree = "<group>";

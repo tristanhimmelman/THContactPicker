@@ -27,9 +27,9 @@
 
 @implementation THContactPickerView
 
-#define kViewPadding 5 // the amount of padding on top and bottom of the view
-#define kHorizontalPadding 2 // the amount of padding to the left and right of each contact bubble
-#define kVerticalPadding 4 // amount of padding above and below each contact bubble
+#define kViewPadding 5          // the amount of padding on top and bottom of the view
+#define kHorizontalPadding 2    // the amount of padding to the left and right of each contact bubble
+#define kVerticalPadding 4      // amount of padding above and below each contact bubble
 #define kTextViewMinWidth 130
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -71,7 +71,7 @@
     self.textView.delegate = self;
     self.textView.font = contactBubble.label.font;
     self.textView.backgroundColor = [UIColor clearColor];
-    self.textView.contentInset = UIEdgeInsetsMake(-4, -2, 0, 0);
+    self.textView.contentInset = UIEdgeInsetsMake(-4, 0, 0, 0);
     self.textView.scrollEnabled = NO;
     self.textView.scrollsToTop = NO;
     self.textView.clipsToBounds = NO;
@@ -80,11 +80,6 @@
     
     // Add shadow to bottom border
     self.backgroundColor = [UIColor whiteColor];
-    CALayer *layer = [self layer];
-    [layer setShadowColor:[[UIColor colorWithRed:225.0/255.0 green:226.0/255.0 blue:228.0/255.0 alpha:1] CGColor]];
-    [layer setShadowOffset:CGSizeMake(0, 2)];
-    [layer setShadowOpacity:1];
-    [layer setShadowRadius:1.0f];
     
     // Add placeholder label
     self.placeholderLabel = [[UILabel alloc] initWithFrame:CGRectMake(8, self.viewPadding, self.frame.size.width, self.lineHeight)];
