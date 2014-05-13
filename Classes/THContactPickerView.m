@@ -419,6 +419,10 @@
         // Capture "delete" key press when cell is empty
         self.selectedContactBubble = [self.contacts objectForKey:[self.contactKeys lastObject]];
         [self.selectedContactBubble select];
+    }else{
+        if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]){
+            [self.delegate contactPickerTextViewDidChange:textView.text];
+        }
     }
     
 }
