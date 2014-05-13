@@ -2,14 +2,15 @@
 //  ContactPickerTextView.m
 //  ContactPicker
 //
-//  Created by Tristan Himmelman on 11/2/12.
+//  Created by Tristan Himmelman on 11/2/12, revised by mysteriouss.
 //  Copyright (c) 2012 Tristan Himmelman. All rights reserved.
 //
 
 #import "THContactPickerView.h"
 #import "THContactBubble.h"
+#import "THContactTextField.h"
 
-@interface THContactPickerView (){
+@interface THContactPickerView ()<THContactTextFieldDelegate>{
     BOOL _shouldSelectTextView;
 }
 
@@ -17,8 +18,10 @@
 @property (nonatomic, strong) NSMutableDictionary *contacts;
 @property (nonatomic, strong) NSMutableArray *contactKeys; // an ordered set of the keys placed in the contacts dictionary
 @property (nonatomic, strong) UILabel *placeholderLabel;
+@property (nonatomic, strong) UILabel *promptLabel;
 @property (nonatomic, assign) CGFloat lineHeight;
-@property (nonatomic, strong) UITextView *textView;
+//@property (nonatomic, strong) UITextView *textView; //FIX
+@property (nonatomic, strong)THContactTextField *textView;
 
 @property (nonatomic, strong) THBubbleStyle *bubbleStyle;
 @property (nonatomic, strong) THBubbleStyle *bubbleSelectedStyle;
@@ -29,7 +32,8 @@
 #define kViewPadding 5          // the amount of padding on top and bottom of the view
 #define kHorizontalPadding 2    // the amount of padding to the left and right of each contact bubble
 #define kVerticalPadding 4      // amount of padding above and below each contact bubble
-#define kTextViewMinWidth 130
+#define kTextViewMinWidth 5
+#define kPlaceHolderLeftPadding 50
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
@@ -68,6 +72,13 @@
     self.placeholderLabel.backgroundColor = [UIColor clearColor];
     [self addSubview:self.placeholderLabel];
     
+    self.promptLabel = [[UILabel alloc] init];
+    [self.promptLabel setText:@"To:"];
+    [self.promptLabel setTextAlignment:NSTextAlignmentCenter];
+    [self.scrollView addSubview:self.promptLabel];
+    
+    /*
+    
     // Create TextView
     // It would make more sense to use a UITextField (because it doesnt wrap text), however, there is no easy way to detect the "delete" key press using a UITextField when there is no string in the field
     self.textView = [[UITextView alloc] init];
@@ -79,6 +90,15 @@
     self.textView.clipsToBounds = NO;
     self.textView.autocorrectionType = UITextAutocorrectionTypeNo;
     [self.textView becomeFirstResponder];
+     
+     */
+    
+    //FIX:@protocol UITextInput, fix the "delete" key problem.
+    self.textView = [[THContactTextField alloc] init];
+    self.textView.delegate = self;
+    self.textView.autocorrectionType = UITextAutocorrectionTypeNo;
+    [self.textView becomeFirstResponder];
+    
     
     // Add shadow to bottom border
     self.backgroundColor = [UIColor whiteColor];
@@ -114,7 +134,9 @@
     [self.textView sizeToFit];
     
     self.placeholderLabel.font = font;
-    self.placeholderLabel.frame = CGRectMake(6, self.viewPadding, self.frame.size.width, self.lineHeight);
+    self.placeholderLabel.frame = CGRectMake(kPlaceHolderLeftPadding, self.viewPadding, self.frame.size.width, self.lineHeight);
+    self.promptLabel.frame = CGRectMake(kHorizontalPadding, self.viewPadding, kPlaceHolderLeftPadding, self.lineHeight);
+    
 }
 
 - (void)addContact:(id)contact withName:(NSString *)name {
@@ -296,7 +318,7 @@
         CGRect bubbleFrame = contactBubble.frame;
         
         if (CGRectIsNull(frameOfLastBubble)){ // first line
-            bubbleFrame.origin.x = kHorizontalPadding;
+            bubbleFrame.origin.x = kPlaceHolderLeftPadding;
             bubbleFrame.origin.y = kVerticalPadding + self.viewPadding;
         } else {
             // Check if contact bubble will fit on the current line
@@ -336,7 +358,7 @@
         
         if (self.contacts.count == 0){
             lineCount = 0;
-            textViewFrame.origin.x = kHorizontalPadding;
+            textViewFrame.origin.x = kPlaceHolderLeftPadding;
         }
     }
     textViewFrame.origin.y = lineCount * self.lineHeight + kVerticalPadding + self.viewPadding;
@@ -386,27 +408,26 @@
     }
 }
 
-#pragma mark - UITextViewDelegate 
+#pragma mark - THContactTextFieldDelegate
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
-{
+
+- (void)textFieldDidHitBackspaceWithEmptyText:(THContactTextField *)textView{
+    
     self.textView.hidden = NO;
     
-    if ( [text isEqualToString:@"\n"] ) { // Return key was pressed
-        return NO;
-    }
-    
-    // Capture "delete" key press when cell is empty
-    if ([textView.text isEqualToString:@""] && [text isEqualToString:@""]){
-        // If no contacts are selected, select the last contact
+    if (self.contacts.count) {
+        // Capture "delete" key press when cell is empty
         self.selectedContactBubble = [self.contacts objectForKey:[self.contactKeys lastObject]];
         [self.selectedContactBubble select];
+    }else{
+        if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]){
+            [self.delegate contactPickerTextViewDidChange:textView.text];
+        }
     }
-
-    return YES;
+    
 }
 
-- (void)textViewDidChange:(UITextView *)textView {    
+- (void)textFieldDidChange:(THContactTextField *)textView{
     if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]){
         [self.delegate contactPickerTextViewDidChange:textView.text];
     }

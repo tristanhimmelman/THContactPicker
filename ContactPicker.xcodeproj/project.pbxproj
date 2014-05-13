@@ -22,6 +22,7 @@
 		6B3B2DF9183267B900798513 /* THBubbleStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DF2183267B900798513 /* THBubbleStyle.m */; };
 		6B3B2DFA183267B900798513 /* THContactBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DF4183267B900798513 /* THContactBubble.m */; };
 		6B3B2DFB183267B900798513 /* THContactPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DF6183267B900798513 /* THContactPickerView.m */; };
+		7D951FC119222B6800EFAAB4 /* THContactTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D951FC019222B6800EFAAB4 /* THContactTextField.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,8 @@
 		6B3B2DF4183267B900798513 /* THContactBubble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactBubble.m; sourceTree = "<group>"; };
 		6B3B2DF5183267B900798513 /* THContactPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactPickerView.h; sourceTree = "<group>"; };
 		6B3B2DF6183267B900798513 /* THContactPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactPickerView.m; sourceTree = "<group>"; };
+		7D951FBF19222B6800EFAAB4 /* THContactTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactTextField.h; sourceTree = "<group>"; };
+		7D951FC019222B6800EFAAB4 /* THContactTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactTextField.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +133,8 @@
 				6B3B2DF4183267B900798513 /* THContactBubble.m */,
 				6B3B2DF5183267B900798513 /* THContactPickerView.h */,
 				6B3B2DF6183267B900798513 /* THContactPickerView.m */,
+				7D951FBF19222B6800EFAAB4 /* THContactTextField.h */,
+				7D951FC019222B6800EFAAB4 /* THContactTextField.m */,
 			);
 			path = Classes;
 			sourceTree = SOURCE_ROOT;
@@ -205,6 +210,7 @@
 				6B3B2DFA183267B900798513 /* THContactBubble.m in Sources */,
 				29A71BF816448250005286F1 /* AppDelegate.m in Sources */,
 				6B3B2DED183260AC00798513 /* THContactPickerViewControllerDemo.m in Sources */,
+				7D951FC119222B6800EFAAB4 /* THContactTextField.m in Sources */,
 				6B3B2DF9183267B900798513 /* THBubbleStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
