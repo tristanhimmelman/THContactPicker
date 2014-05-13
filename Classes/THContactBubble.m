@@ -208,11 +208,10 @@
 
 #pragma mark - UITextViewDelegate
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
-{
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     self.textView.hidden = NO;
     
-    if ( [text isEqualToString:@"\n"] ) { // Return key was pressed
+    if ([text isEqualToString:@"\n"]){ // Return key was pressed
         return NO;
     }
     
@@ -221,26 +220,19 @@
         if ([self.delegate respondsToSelector:@selector(contactBubbleShouldBeRemoved:)]){
             [self.delegate contactBubbleShouldBeRemoved:self];
         }
+        return NO;
     }
-    
-    if (self.isSelected){
-        self.textView.text = @"";
-        [self unSelect];
-        if ([self.delegate respondsToSelector:@selector(contactBubbleWasUnSelected:)]){
-            [self.delegate contactBubbleWasUnSelected:self];
-        }
-    }
-    
+        
     return YES;
 }
 
 #pragma mark - UITextInputTraits
 
-- (void) setKeyboardAppearance:(UIKeyboardAppearance)keyboardAppearance {
+- (void)setKeyboardAppearance:(UIKeyboardAppearance)keyboardAppearance {
     self.textView.keyboardAppearance = keyboardAppearance;
 }
 
-- (UIKeyboardAppearance) keyboardAppearance {
+- (UIKeyboardAppearance)keyboardAppearance {
     return self.textView.keyboardAppearance;
 }
 

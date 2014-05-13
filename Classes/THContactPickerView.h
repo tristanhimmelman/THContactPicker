@@ -34,4 +34,5 @@
 - (void)disableDropShadow;
 - (void)resignKeyboard;
 - (void)setBubbleStyle:(THBubbleStyle *)color selectedStyle:(THBubbleStyle *)selectedColor;
+
 @end

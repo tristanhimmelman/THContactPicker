@@ -10,34 +10,30 @@
 
 @implementation THContactTextField
 
-- (id)init{
+- (id)init {
     self = [super init];
     if (self) {
-        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldTextDidChange:) name:UITextFieldTextDidChangeNotification object:nil];
     }
     return self;
 }
 
-- (void)dealloc{
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)deleteBackward{
-    
+- (void)deleteBackward {
     BOOL isTextFieldEmpty = (self.text.length == 0);
-    if (isTextFieldEmpty) {
-        if ([self.delegate
-             respondsToSelector:@selector(textFieldDidHitBackspaceWithEmptyText:)]) {
-            
+    if (isTextFieldEmpty){
+        if ([self.delegate respondsToSelector:@selector(textFieldDidHitBackspaceWithEmptyText:)]){
             [self.delegate textFieldDidHitBackspaceWithEmptyText:self];
         }
     }
     [super deleteBackward];
 }
 
-- (void)textFieldTextDidChange:(NSNotification *)no{
-    if (self.delegate && [self.delegate respondsToSelector:@selector(textFieldDidChange:)]) {
+- (void)textFieldTextDidChange:(NSNotification *)notification {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(textFieldDidChange:)]){
         [self.delegate textFieldDidChange:self];
     }
 }
