@@ -1,12 +1,12 @@
 Pod::Spec.new do |s|
   s.name         = 'THContactPicker'
-  s.version      = '0.0.2'
+  s.version      = '0.0.3'
   s.summary      = "Contact picker view controller"
-  s.homepage     = 'https://github.com/tristanhimmelman/THContactPicker'
+  s.homepage     = 'https://github.com/mysteriouss/THContactPicker'
 
   s.license      = 'MIT'
   s.author       = { 'Tristan Himmelman' => '' }
-  s.source       = { :git => 'https://github.com/tristanhimmelman/THContactPicker.git', :tag => s.version.to_s }
+  s.source       = { :git => 'https://github.com/mysteriouss/THContactPicker.git', :tag => s.version.to_s }
 
   s.platform     = :ios, '5.1'
   s.requires_arc = true
