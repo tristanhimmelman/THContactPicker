@@ -199,7 +199,7 @@
 }
 
 - (void)setPlaceholderLabelText:(NSString *)text {
-    self.placeholderLabel.text = placeholderString;
+    self.placeholderLabel.text = text;
 
     [self layoutView];
 }
