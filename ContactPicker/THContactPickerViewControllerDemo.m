@@ -146,7 +146,7 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
 }
 
 - (NSString *)titleForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return [self.contacts objectAtIndex:indexPath.row];
+    return [self.filteredContacts objectAtIndex:indexPath.row];
 }
 
 - (void) didChangeSelectedItems {
