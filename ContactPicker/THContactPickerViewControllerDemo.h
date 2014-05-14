@@ -10,7 +10,7 @@
 
 @interface THContactPickerViewControllerDemo : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic, readonly) THContactPickerView *contactPickerView;
+@property (nonatomic, strong) THContactPickerView *contactPickerView;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSArray *contacts;
 @property (nonatomic, readonly) NSArray *selectedContacts;

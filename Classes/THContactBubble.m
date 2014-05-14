@@ -14,7 +14,7 @@
 #define kVerticalPadding 2
 
 #define kDefaultBorderWidth 1
-#define kDefaultCornerRadiusFactor 4
+#define kDefaultCornerRadiusFactor 5
 
 #define kColorText [UIColor blackColor]
 #define kColorGradientTop [UIColor colorWithRed:219.0/255.0 green:229.0/255.0 blue:249.0/255.0 alpha:1.0]
@@ -27,7 +27,7 @@
 #define kColorSelectedBorder [UIColor colorWithRed:56.0/255.0 green:0/255.0 blue:233.0/255.0 alpha:1.0]
 
 #define k7DefaultBorderWidth 0
-#define k7DefaultCornerRadiusFactor 4
+#define k7DefaultCornerRadiusFactor 5
 
 #define k7ColorText [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
 #define k7ColorGradientTop  nil
@@ -157,18 +157,16 @@
     if ([self.delegate respondsToSelector:@selector(contactBubbleWasSelected:)]){
         [self.delegate contactBubbleWasSelected:self];
     }
-
+    
     CALayer *viewLayer = [self layer];
     viewLayer.borderColor = self.selectedStyle.borderColor.CGColor;
-    
     self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[self.selectedStyle.gradientTop CGColor], (id)[self.selectedStyle.gradientBottom CGColor], nil];
-
+    
     self.label.textColor = self.selectedStyle.textColor;
     self.layer.borderWidth = self.selectedStyle.borderWidth;
     if (self.selectedStyle.cornerRadiusFactor > 0) {
         self.layer.cornerRadius = self.bounds.size.height / self.selectedStyle.cornerRadiusFactor;
-    }
-    else {
+    } else {
         self.layer.cornerRadius = 0;
     }
     
