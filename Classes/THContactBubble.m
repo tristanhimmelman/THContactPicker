@@ -10,11 +10,11 @@
 
 @implementation THContactBubble
 
-#define kHorizontalPadding 10
+#define kHorizontalPadding 3
 #define kVerticalPadding 2
 
 #define kDefaultBorderWidth 1
-#define kDefaultCornerRadiusFactor 2
+#define kDefaultCornerRadiusFactor 4
 
 #define kColorText [UIColor blackColor]
 #define kColorGradientTop [UIColor colorWithRed:219.0/255.0 green:229.0/255.0 blue:249.0/255.0 alpha:1.0]
@@ -27,16 +27,16 @@
 #define kColorSelectedBorder [UIColor colorWithRed:56.0/255.0 green:0/255.0 blue:233.0/255.0 alpha:1.0]
 
 #define k7DefaultBorderWidth 0
-#define k7DefaultCornerRadiusFactor 2
+#define k7DefaultCornerRadiusFactor 4
 
-#define k7ColorText [UIColor whiteColor]
-#define k7ColorGradientTop [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
-#define k7ColorGradientBottom [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
+#define k7ColorText [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
+#define k7ColorGradientTop  nil
+#define k7ColorGradientBottom  nil
 #define k7ColorBorder nil
 
 #define k7ColorSelectedText [UIColor whiteColor]
-#define k7ColorSelectedGradientTop  [UIColor colorWithRed:151.0/255.0f green:199.0/255.0f blue:250.0/255.0f alpha:1.0]
-#define k7ColorSelectedGradientBottom  [UIColor colorWithRed:151.0/255.0f green:199.0/255.0f blue:250.0/255.0f alpha:1.0]
+#define k7ColorSelectedGradientTop [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
+#define k7ColorSelectedGradientBottom [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
 #define k7ColorSelectedBorder nil
 
 - (id)initWithName:(NSString *)name {
@@ -105,7 +105,7 @@
     // Create Label
     self.label = [[UILabel alloc] init];
     self.label.backgroundColor = [UIColor clearColor];
-    self.label.text = self.name;
+    self.label.text = [NSString stringWithFormat:@"%@,", self.name];
     [self addSubview:self.label];
     
     self.textView = [[UITextView alloc] init];

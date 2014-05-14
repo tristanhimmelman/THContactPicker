@@ -43,21 +43,12 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
         [self setEdgesForExtendedLayout:UIRectEdgeBottom|UIRectEdgeLeft|UIRectEdgeRight];
     }
-    
-    UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithTitle:@"Remove All"
-                                                                   style:UIBarButtonItemStylePlain
-                                                                  target:self
-                                                                  action:@selector(clearSelectedContacts:)];
-    self.navigationItem.rightBarButtonItem = barButton;
-    self.placeholderString  = @"Who are you with?";
-    
-
-    
+        
     // Initialize and add Contact Picker View
     _contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kPickerViewHeight)];
     _contactPickerView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth;
     _contactPickerView.delegate = self;
-    [_contactPickerView setPlaceholderString:_placeholderString];
+    [_contactPickerView setPlaceholderString:@"Who are you with?"];
     [self.view addSubview:_contactPickerView];
     
     CALayer *layer = [_contactPickerView layer];
@@ -67,8 +58,7 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     [layer setShadowRadius:1.0f];
     
     // Fill the rest of the view with the table view
-    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds
-                                                  style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
     self.tableView.contentInset = UIEdgeInsetsMake(self.tableView.contentInset.top,
                                                    self.tableView.contentInset.left,
@@ -82,16 +72,11 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
 
 - (void)viewWillAppear:(BOOL)animated {
     [self adjustTableViewInsets];
-    /*Register for keyboard notifications*/
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardDidShow:)
-                                                 name:UIKeyboardDidShowNotification
-                                               object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardDidHide:)
-                                                 name:UIKeyboardDidHideNotification
-                                               object:nil];
+    /*Register for keyboard notifications*/
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -117,12 +102,7 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     return _filteredContacts;
 }
 
-- (void)setPlaceholderString:(NSString *)placeholderString {
-    _placeholderString = placeholderString;
-    [self.contactPickerView setPlaceholderString:_placeholderString];
-}
-
-- (void)adjustTableViewInsetTop:(CGFloat) topInset bottom:(CGFloat) bottomInset {
+- (void)adjustTableViewInsetTop:(CGFloat)topInset bottom:(CGFloat)bottomInset {
     self.tableView.contentInset = UIEdgeInsetsMake(topInset,
                                                    self.tableView.contentInset.left,
                                                    bottomInset,
@@ -249,14 +229,6 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     cell.accessoryType = UITableViewCellAccessoryNone;
     [self didChangeSelectedItems];
-}
-
-- (void)clearSelectedContacts:(id)sender {
-    [self.contactPickerView removeAllContacts];
-    [self.privateSelectedContacts removeAllObjects];
-    self.filteredContacts = self.contacts;
-    [self didChangeSelectedItems];
-    [self.tableView reloadData];
 }
 
 #pragma  mark - NSNotificationCenter

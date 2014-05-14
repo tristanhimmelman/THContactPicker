@@ -20,15 +20,15 @@
 @property (nonatomic, strong) UILabel *placeholderLabel;
 @property (nonatomic, assign) CGFloat lineHeight;
 @property (nonatomic, strong) THContactTextField *textView;
-
 @property (nonatomic, strong) THBubbleStyle *bubbleStyle;
 @property (nonatomic, strong) THBubbleStyle *bubbleSelectedStyle;
+
 @end
 
 @implementation THContactPickerView
 
 #define kViewPadding            5   // the amount of padding on top and bottom of the view
-#define kHorizontalPadding      2   // the amount of padding to the left and right of each contact bubble
+#define kHorizontalPadding      1   // the amount of padding to the left and right of each contact bubble
 #define kHorizontalSidePadding  10  // the amount of padding on the left and right of the view
 #define kVerticalPadding        4   // amount of padding above and below each contact bubble
 #define kTextViewMinWidth       20
