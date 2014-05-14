@@ -24,14 +24,14 @@
 @property (nonatomic, strong) THContactBubble *selectedContactBubble;
 @property (nonatomic, assign) IBOutlet id <THContactPickerDelegate> delegate;
 @property (nonatomic, assign) BOOL limitToOne;
-@property (nonatomic, assign) CGFloat viewPadding;
+@property (nonatomic, assign) CGFloat verticalPadding;
 @property (nonatomic, strong) UIFont *font;
 
 - (void)addContact:(id)contact withName:(NSString *)name;
 - (void)removeContact:(id)contact;
 - (void)removeAllContacts;
 - (void)setPlaceholderString:(NSString *)placeholderString;
-- (void)disableDropShadow;
+- (void)setPromptLabelText:(NSString *)text;
 - (void)resignKeyboard;
 - (void)setBubbleStyle:(THBubbleStyle *)color selectedStyle:(THBubbleStyle *)selectedColor;
 

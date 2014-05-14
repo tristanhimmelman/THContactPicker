@@ -30,8 +30,8 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
         // Custom initialization
         self.title = @"Contacts";
         self.contacts = [NSArray arrayWithObjects:@"Tristan Himmelman",
-                         @"John Snow", @"Alex", @"Nicole",@"Thomas Lee", @"Nicholas", @"Bob Barss",
-                         @"Andrew Stall", @"Marc Sarasin", @"Mike",@"Erica Slon", @"Eric Anderson", @"Josh Salpeter", nil];
+                         @"John Snow", @"Alex Martin", @"Nicolai Small",@"Thomas Lee", @"Nicholas Hudson", @"Bob Barss",
+                         @"Andrew Stall", @"Marc Sarasin", @"Mike Beatson",@"Erica Slon", @"Eric Anderson", @"Josh Salpeter", nil];
     }
     return self;
 }
@@ -49,6 +49,7 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     self.contactPickerView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth;
     self.contactPickerView.delegate = self;
     [self.contactPickerView setPlaceholderString:@"Who would you like to add?"];
+    [self.contactPickerView setPromptLabelText:@"To:"];
     [self.view addSubview:self.contactPickerView];
     
     CALayer *layer = [self.contactPickerView layer];

@@ -16,8 +16,9 @@
 
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) NSMutableDictionary *contacts;
-@property (nonatomic, strong) NSMutableArray *contactKeys; // an ordered set of the keys placed in the contacts dictionary
+@property (nonatomic, strong) NSMutableArray *contactKeys;      // an ordered set of the keys placed in the contacts dictionary
 @property (nonatomic, strong) UILabel *placeholderLabel;
+@property (nonatomic, strong) UILabel *promptLabel;
 @property (nonatomic, assign) CGFloat lineHeight;
 @property (nonatomic, strong) THContactTextField *textView;
 @property (nonatomic, strong) THBubbleStyle *bubbleStyle;
@@ -27,12 +28,11 @@
 
 @implementation THContactPickerView
 
-#define kViewPadding            5   // the amount of padding on top and bottom of the view
+#define kVerticalViewPadding        5   // the amount of padding on top and bottom of the view
 #define kHorizontalPadding      0   // the amount of padding to the left and right of each contact bubble
 #define kHorizontalSidePadding  10  // the amount of padding on the left and right of the view
-#define kVerticalPadding        4   // amount of padding above and below each contact bubble
-#define kTextViewMinWidth       20
-#define kPlaceHolderLeftPadding 50
+#define kVerticalPadding        2   // amount of padding above and below each contact bubble
+#define kTextViewMinWidth       20  // minimum width of trailing text view
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
@@ -53,7 +53,7 @@
 }
 
 - (void)setup {
-    self.viewPadding = kViewPadding;
+    self.verticalPadding = kVerticalViewPadding;
     
     self.contacts = [NSMutableDictionary dictionary];
     self.contactKeys = [NSMutableArray array];
@@ -69,7 +69,13 @@
     self.placeholderLabel = [[UILabel alloc] init];
     self.placeholderLabel.textColor = [UIColor grayColor];
     self.placeholderLabel.backgroundColor = [UIColor clearColor];
-    [self addSubview:self.placeholderLabel];
+    [self.scrollView addSubview:self.placeholderLabel];
+    
+    self.promptLabel = [[UILabel alloc] init];
+    self.promptLabel.backgroundColor = [UIColor clearColor];
+    self.promptLabel.text = nil;
+    [self.promptLabel sizeToFit];
+    [self.scrollView addSubview:self.promptLabel];
     
     // Create TextView
     self.textView = [[THContactTextField alloc] init];
@@ -94,12 +100,6 @@
 
 #pragma mark - Public functions
 
-- (void)disableDropShadow {
-    CALayer *layer = [self layer];
-    [layer setShadowRadius:0];
-    [layer setShadowOpacity:0];
-}
-
 - (void)setFont:(UIFont *)font {
     _font = font;
     // Create a contact bubble to determine the height of a line
@@ -110,8 +110,16 @@
     self.textView.font = font;
     [self.textView sizeToFit];
     
+    self.promptLabel.font = font;
     self.placeholderLabel.font = font;
-    self.placeholderLabel.frame = CGRectMake(kHorizontalSidePadding + 3, self.viewPadding, self.frame.size.width, self.lineHeight);
+    [self updateLabelFrames];
+}
+
+- (void)setPromptLabelText:(NSString *)text {
+    self.promptLabel.text = text;
+    
+    [self updateLabelFrames];
+    [self layoutView];
 }
 
 - (void)addContact:(id)contact withName:(NSString *)name {
@@ -196,8 +204,8 @@
     [self.textView resignFirstResponder];
 }
 
-- (void)setViewPadding:(CGFloat)viewPadding {
-    _viewPadding = viewPadding;
+- (void)setVerticalPadding:(CGFloat)viewPadding {
+    _verticalPadding = viewPadding;
 
     [self layoutView];
 }
@@ -213,7 +221,7 @@
         contactBubble.style = style;
         contactBubble.selectedStyle = selectedStyle;
 
-        // thid stuff reloads bubble
+        // this stuff reloads bubble
         if (contactBubble.isSelected){
             [contactBubble select];
         } else {
@@ -222,11 +230,11 @@
     }
 }
 
-#pragma mark - Private functions
-
 - (BOOL)becomeFirstResponder {
     return [self.textView becomeFirstResponder];
 }
+
+#pragma mark - Private functions
 
 - (void)scrollToBottomWithAnimation:(BOOL)animated {
     if (animated){
@@ -285,6 +293,20 @@
     return nil;
 }
 
+- (void)updateLabelFrames {
+    [self.promptLabel sizeToFit];
+    self.promptLabel.frame = CGRectMake(kHorizontalSidePadding, self.verticalPadding, self.promptLabel.frame.size.width, self.lineHeight);
+    self.placeholderLabel.frame = CGRectMake([self firstLineXOffset] + 3, self.verticalPadding, self.frame.size.width, self.lineHeight);
+}
+
+- (CGFloat)firstLineXOffset {
+    if (self.promptLabel.text == nil){
+        return kHorizontalSidePadding;
+    } else {
+        return self.promptLabel.frame.origin.x + self.promptLabel.frame.size.width + 1;
+    }
+}
+
 - (void)layoutView {
     CGRect frameOfLastBubble = CGRectNull;
     int lineCount = 0;
@@ -295,8 +317,8 @@
         CGRect bubbleFrame = contactBubble.frame;
         
         if (CGRectIsNull(frameOfLastBubble)){ // first line
-            bubbleFrame.origin.x = kHorizontalSidePadding;
-            bubbleFrame.origin.y = kVerticalPadding + self.viewPadding;
+            bubbleFrame.origin.x = [self firstLineXOffset];
+            bubbleFrame.origin.y = kVerticalPadding + self.verticalPadding;
         } else {
             // Check if contact bubble will fit on the current line
             CGFloat width = bubbleFrame.size.width + 2 * kHorizontalPadding;
@@ -307,11 +329,12 @@
             } else { // No space on line, jump to next line
                 lineCount++;
                 bubbleFrame.origin.x = kHorizontalSidePadding;
-                bubbleFrame.origin.y = (lineCount * self.lineHeight) + kVerticalPadding + 	self.viewPadding;
+                bubbleFrame.origin.y = (lineCount * self.lineHeight) + kVerticalPadding + 	self.verticalPadding;
             }
         }
         frameOfLastBubble = bubbleFrame;
         contactBubble.frame = bubbleFrame;
+        
         // Add contact bubble if it hasn't been added
         if (contactBubble.superview == nil){
             [self.scrollView addSubview:contactBubble];
@@ -335,15 +358,15 @@
         
         if (self.contacts.count == 0){
             lineCount = 0;
-            textViewFrame.origin.x = kHorizontalSidePadding;
+            textViewFrame.origin.x = [self firstLineXOffset];
         }
     }
     
-    textViewFrame.origin.y = lineCount * self.lineHeight + kVerticalPadding + self.viewPadding;
+    textViewFrame.origin.y = lineCount * self.lineHeight + kVerticalPadding + self.verticalPadding;
     self.textView.frame = textViewFrame;
 
     // Add text view if it hasn't been added
-    self.textView.center = CGPointMake(self.textView.center.x, lineCount * self.lineHeight + textViewHeight / 2 + kVerticalPadding + self.viewPadding);
+    self.textView.center = CGPointMake(self.textView.center.x, lineCount * self.lineHeight + textViewHeight / 2 + kVerticalPadding + self.verticalPadding);
 
     if (self.textView.superview == nil){
         [self.scrollView addSubview:self.textView];
@@ -357,8 +380,8 @@
     
     // Adjust scroll view content size
     CGRect frame = self.bounds;
-    CGFloat maxFrameHeight = 2 * self.lineHeight + 2 * self.viewPadding; // limit frame to two lines of content
-    CGFloat newHeight = (lineCount + 1) * self.lineHeight + 2 * self.viewPadding;
+    CGFloat maxFrameHeight = 2 * self.lineHeight + 2 * self.verticalPadding; // limit frame to two lines of content
+    CGFloat newHeight = (lineCount + 1) * self.lineHeight + 2 * self.verticalPadding;
     self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, newHeight);
     
     // Adjust frame of view if necessary
@@ -479,7 +502,7 @@
     }
 }
 
-- (UIKeyboardAppearance) keyboardAppearance {
+- (UIKeyboardAppearance)keyboardAppearance {
     return self.textView.keyboardAppearance;
 }
 
