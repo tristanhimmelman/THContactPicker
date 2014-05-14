@@ -48,8 +48,9 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     self.contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kPickerViewHeight)];
     self.contactPickerView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth;
     self.contactPickerView.delegate = self;
-    [self.contactPickerView setPlaceholderString:@"Who would you like to add?"];
+    [self.contactPickerView setPlaceholderString:@"Who would you like to message?"];
     [self.contactPickerView setPromptLabelText:@"To:"];
+    //[self.contactPickerView setLimitToOne:YES];
     [self.view addSubview:self.contactPickerView];
     
     CALayer *layer = [self.contactPickerView layer];
@@ -108,7 +109,7 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     self.tableView.scrollIndicatorInsets = self.tableView.contentInset;
 }
 
-- (NSInteger) selectedCount {
+- (NSInteger)selectedCount {
     return self.privateSelectedContacts.count;
 }
 

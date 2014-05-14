@@ -128,10 +128,14 @@
         NSLog(@"Cannot add the same object twice to ContactPickerView");
         return;
     }
+    if (self.contactKeys.count == 1 && self.limitToOne){
+        THContactBubble *contactBubble = [self.contacts objectForKey:[self.contactKeys firstObject]];
+        [self removeContactBubble:contactBubble];
+    }
     
     self.textView.text = @"";
     
-    THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name style:self.bubbleStyle selectedStyle:self.bubbleSelectedStyle];
+    THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name style:self.bubbleStyle selectedStyle:self.bubbleSelectedStyle showComma:!self.limitToOne];
     contactBubble.keyboardAppearance = self.keyboardAppearance;
     if (self.font != nil){
         [contactBubble setFont:self.font];
@@ -200,7 +204,7 @@
     [self layoutView];
 }
 
-- (void)resignKeyboard {
+- (void)resignFirstResponder {
     [self.textView resignFirstResponder];
 }
 

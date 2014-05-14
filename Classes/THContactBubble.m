@@ -47,10 +47,18 @@
 }
 
 - (id)initWithName:(NSString *)name style:(THBubbleStyle *)style selectedStyle:(THBubbleStyle *)selectedStyle {
+    if ([self initWithName:name style:style selectedStyle:selectedStyle showComma:NO]){
+        
+    }
+    return self;
+}
+
+- (id)initWithName:(NSString *)name style:(THBubbleStyle *)style selectedStyle:(THBubbleStyle *)selectedStyle showComma:(BOOL)showComma {
     self = [super init];
     if (self){
         self.name = name;
         self.isSelected = NO;
+        self.showComma = showComma;
         
         if ([[[UIDevice currentDevice] systemVersion] compare:@"7" options:NSNumericSearch] == NSOrderedAscending) {
             //iOS verson less than 7
@@ -105,7 +113,11 @@
     // Create Label
     self.label = [[UILabel alloc] init];
     self.label.backgroundColor = [UIColor clearColor];
-    self.label.text = [NSString stringWithFormat:@"%@,", self.name];
+    if (self.showComma){
+        self.label.text = [NSString stringWithFormat:@"%@,", self.name];
+    } else {
+        self.label.text = self.name;
+    }
     [self addSubview:self.label];
     
     self.textView = [[UITextView alloc] init];

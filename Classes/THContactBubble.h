@@ -26,6 +26,7 @@
 @property (nonatomic, strong) UILabel *label;
 @property (nonatomic, strong) UITextView *textView; // used to capture keyboard touches when view is selected
 @property (nonatomic, assign) BOOL isSelected;
+@property (nonatomic, assign) BOOL showComma;
 @property (nonatomic, assign) id <THContactBubbleDelegate>delegate;
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
 
@@ -34,6 +35,7 @@
 
 - (id)initWithName:(NSString *)name;
 - (id)initWithName:(NSString *)name style:(THBubbleStyle *)style selectedStyle:(THBubbleStyle *)selectedStyle;
+- (id)initWithName:(NSString *)name style:(THBubbleStyle *)style selectedStyle:(THBubbleStyle *)selectedStyle showComma:(BOOL)showComma;
 
 - (void)select;
 - (void)unSelect;
