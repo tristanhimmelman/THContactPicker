@@ -60,46 +60,22 @@
         self.isSelected = NO;
         self.showComma = showComma;
         
-        if ([[[UIDevice currentDevice] systemVersion] compare:@"7" options:NSNumericSearch] == NSOrderedAscending) {
-            //iOS verson less than 7
-            if (style == nil) {
-                style = [[THBubbleStyle alloc] initWithTextColor:kColorText
-                                                     gradientTop:kColorGradientTop
-                                                  gradientBottom:kColorGradientBottom
-                                                     borderColor:kColorBorder
-                                                    borderWidth:kDefaultBorderWidth
-                                              cornerRadiusFactor:kDefaultCornerRadiusFactor];
-            }
-            
-            if (selectedStyle == nil) {
-                selectedStyle = [[THBubbleStyle alloc] initWithTextColor:kColorSelectedText
-                                                             gradientTop:kColorSelectedGradientTop
-                                                          gradientBottom:kColorSelectedGradientBottom
-                                                             borderColor:kColorSelectedBorder
-                                                            borderWidth:kDefaultBorderWidth
-                                                      cornerRadiusFactor:kDefaultCornerRadiusFactor];
-            }
+        // default styles
+        if (style == nil) {
+            style = [[THBubbleStyle alloc] initWithTextColor:k7ColorText
+                                                 gradientTop:k7ColorGradientTop
+                                              gradientBottom:k7ColorGradientBottom
+                                                 borderColor:k7ColorBorder
+                                                 borderWidth:k7DefaultBorderWidth
+                                          cornerRadiusFactor:k7DefaultCornerRadiusFactor];
         }
-        
-        else {
-            // iOS 7 and later
-            if (style == nil) {
-                style = [[THBubbleStyle alloc] initWithTextColor:k7ColorText
-                                                     gradientTop:k7ColorGradientTop
-                                                  gradientBottom:k7ColorGradientBottom
-                                                     borderColor:k7ColorBorder
-                                                     borderWidth:k7DefaultBorderWidth
-                                              cornerRadiusFactor:k7DefaultCornerRadiusFactor];
-            }
-            
-            if (selectedStyle == nil) {
-                selectedStyle = [[THBubbleStyle alloc] initWithTextColor:k7ColorSelectedText
-                                                             gradientTop:k7ColorSelectedGradientTop
-                                                          gradientBottom:k7ColorSelectedGradientBottom
-                                                             borderColor:k7ColorSelectedBorder
-                                                            borderWidth:k7DefaultBorderWidth
-                                                      cornerRadiusFactor:k7DefaultCornerRadiusFactor];
-            }
+        if (selectedStyle == nil) {
+            selectedStyle = [[THBubbleStyle alloc] initWithTextColor:k7ColorSelectedText
+                                                         gradientTop:k7ColorSelectedGradientTop
+                                                      gradientBottom:k7ColorSelectedGradientBottom
+                                                         borderColor:k7ColorSelectedBorder
+                                                        borderWidth:k7DefaultBorderWidth
+                                                  cornerRadiusFactor:k7DefaultCornerRadiusFactor];
         }
         
         self.style = style;
