@@ -34,7 +34,7 @@
 
 // View Customization
 - (void)setBubbleStyle:(THBubbleStyle *)color selectedStyle:(THBubbleStyle *)selectedColor;
-- (void)setPlaceholderString:(NSString *)placeholderString;
+- (void)setPlaceholderLabelText:(NSString *)text;
 - (void)setPromptLabelText:(NSString *)text;
 - (void)setFont:(UIFont *)font;
 

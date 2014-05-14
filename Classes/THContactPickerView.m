@@ -198,7 +198,7 @@
     [self scrollToBottomWithAnimation:NO];
 }
 
-- (void)setPlaceholderString:(NSString *)placeholderString {
+- (void)setPlaceholderLabelText:(NSString *)text {
     self.placeholderLabel.text = placeholderString;
 
     [self layoutView];
