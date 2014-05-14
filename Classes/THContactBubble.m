@@ -221,6 +221,11 @@
             [self.delegate contactBubbleShouldBeRemoved:self];
         }
         return NO;
+    } else {
+        [self unSelect];
+        if ([self.delegate respondsToSelector:@selector(contactBubbleWasUnSelected:)]){
+            [self.delegate contactBubbleWasUnSelected:self];
+        }
     }
         
     return YES;

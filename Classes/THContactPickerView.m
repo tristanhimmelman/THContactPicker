@@ -111,7 +111,7 @@
     [self.textView sizeToFit];
     
     self.placeholderLabel.font = font;
-    self.placeholderLabel.frame = CGRectMake(kHorizontalSidePadding, self.viewPadding, self.frame.size.width, self.lineHeight);
+    self.placeholderLabel.frame = CGRectMake(kHorizontalSidePadding + 3, self.viewPadding, self.frame.size.width, self.lineHeight);
 }
 
 - (void)addContact:(id)contact withName:(NSString *)name {
@@ -411,6 +411,12 @@
         self.placeholderLabel.hidden = NO;
     } else {
         self.placeholderLabel.hidden = YES;
+    }
+    
+    CGPoint offset = self.scrollView.contentOffset;
+    offset.y = self.scrollView.contentSize.height - self.scrollView.frame.size.height;
+    if (offset.y > self.scrollView.contentOffset.y){
+        [self scrollToBottomWithAnimation:YES];
     }
 }
 

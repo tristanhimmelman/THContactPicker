@@ -29,9 +29,9 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     if (self) {
         // Custom initialization
         self.title = @"Contacts";
-        self.contacts = [NSArray arrayWithObjects:@"Tris tan",
-                         @"John",@"Himmelman", @"Nicole",@"Robertson", @"Nicholas",@"Barss",
-                         @"Andrew",@"Sarasin", @"Mike",@"Slon", @"Eric",@"Salpeter", nil];
+        self.contacts = [NSArray arrayWithObjects:@"Tristan Himmelman",
+                         @"John Snow", @"Alex", @"Nicole",@"Thomas Lee", @"Nicholas", @"Bob Barss",
+                         @"Andrew Stall", @"Marc Sarasin", @"Mike",@"Erica Slon", @"Eric Anderson", @"Josh Salpeter", nil];
     }
     return self;
 }
