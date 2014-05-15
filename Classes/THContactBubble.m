@@ -7,14 +7,19 @@
 //
 
 #import "THContactBubble.h"
+#import "THContactTextField.h"
+
+@interface THContactBubble ()<THContactTextFieldDelegate>
+
+@end
 
 @implementation THContactBubble
 
-#define kHorizontalPadding 10
+#define kHorizontalPadding 3
 #define kVerticalPadding 2
 
 #define kDefaultBorderWidth 1
-#define kDefaultCornerRadiusFactor 2
+#define kDefaultCornerRadiusFactor 5
 
 #define kColorText [UIColor blackColor]
 #define kColorGradientTop [UIColor colorWithRed:219.0/255.0 green:229.0/255.0 blue:249.0/255.0 alpha:1.0]
@@ -27,16 +32,16 @@
 #define kColorSelectedBorder [UIColor colorWithRed:56.0/255.0 green:0/255.0 blue:233.0/255.0 alpha:1.0]
 
 #define k7DefaultBorderWidth 0
-#define k7DefaultCornerRadiusFactor 2
+#define k7DefaultCornerRadiusFactor 5
 
-#define k7ColorText [UIColor whiteColor]
-#define k7ColorGradientTop [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
-#define k7ColorGradientBottom [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
+#define k7ColorText [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
+#define k7ColorGradientTop  nil
+#define k7ColorGradientBottom  nil
 #define k7ColorBorder nil
 
 #define k7ColorSelectedText [UIColor whiteColor]
-#define k7ColorSelectedGradientTop  [UIColor colorWithRed:151.0/255.0f green:199.0/255.0f blue:250.0/255.0f alpha:1.0]
-#define k7ColorSelectedGradientBottom  [UIColor colorWithRed:151.0/255.0f green:199.0/255.0f blue:250.0/255.0f alpha:1.0]
+#define k7ColorSelectedGradientTop [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
+#define k7ColorSelectedGradientBottom [UIColor colorWithRed:0.0 green:122.0/255.0 blue:1.0 alpha:1.0]
 #define k7ColorSelectedBorder nil
 
 - (id)initWithName:(NSString *)name {
@@ -47,51 +52,35 @@
 }
 
 - (id)initWithName:(NSString *)name style:(THBubbleStyle *)style selectedStyle:(THBubbleStyle *)selectedStyle {
+    if ([self initWithName:name style:style selectedStyle:selectedStyle showComma:NO]){
+        
+    }
+    return self;
+}
+
+- (id)initWithName:(NSString *)name style:(THBubbleStyle *)style selectedStyle:(THBubbleStyle *)selectedStyle showComma:(BOOL)showComma {
     self = [super init];
     if (self){
         self.name = name;
         self.isSelected = NO;
+        self.showComma = showComma;
         
-        if ([[[UIDevice currentDevice] systemVersion] compare:@"7" options:NSNumericSearch] == NSOrderedAscending) {
-            //iOS verson less than 7
-            if (style == nil) {
-                style = [[THBubbleStyle alloc] initWithTextColor:kColorText
-                                                     gradientTop:kColorGradientTop
-                                                  gradientBottom:kColorGradientBottom
-                                                     borderColor:kColorBorder
-                                                    borderWidth:kDefaultBorderWidth
-                                              cornerRadiusFactor:kDefaultCornerRadiusFactor];
-            }
-            
-            if (selectedStyle == nil) {
-                selectedStyle = [[THBubbleStyle alloc] initWithTextColor:kColorSelectedText
-                                                             gradientTop:kColorSelectedGradientTop
-                                                          gradientBottom:kColorSelectedGradientBottom
-                                                             borderColor:kColorSelectedBorder
-                                                            borderWidth:kDefaultBorderWidth
-                                                      cornerRadiusFactor:kDefaultCornerRadiusFactor];
-            }
+        // default styles
+        if (style == nil) {
+            style = [[THBubbleStyle alloc] initWithTextColor:k7ColorText
+                                                 gradientTop:k7ColorGradientTop
+                                              gradientBottom:k7ColorGradientBottom
+                                                 borderColor:k7ColorBorder
+                                                 borderWidth:k7DefaultBorderWidth
+                                          cornerRadiusFactor:k7DefaultCornerRadiusFactor];
         }
-        
-        else {
-            // iOS 7 and later
-            if (style == nil) {
-                style = [[THBubbleStyle alloc] initWithTextColor:k7ColorText
-                                                     gradientTop:k7ColorGradientTop
-                                                  gradientBottom:k7ColorGradientBottom
-                                                     borderColor:k7ColorBorder
-                                                     borderWidth:k7DefaultBorderWidth
-                                              cornerRadiusFactor:k7DefaultCornerRadiusFactor];
-            }
-            
-            if (selectedStyle == nil) {
-                selectedStyle = [[THBubbleStyle alloc] initWithTextColor:k7ColorSelectedText
-                                                             gradientTop:k7ColorSelectedGradientTop
-                                                          gradientBottom:k7ColorSelectedGradientBottom
-                                                             borderColor:k7ColorSelectedBorder
-                                                            borderWidth:k7DefaultBorderWidth
-                                                      cornerRadiusFactor:k7DefaultCornerRadiusFactor];
-            }
+        if (selectedStyle == nil) {
+            selectedStyle = [[THBubbleStyle alloc] initWithTextColor:k7ColorSelectedText
+                                                         gradientTop:k7ColorSelectedGradientTop
+                                                      gradientBottom:k7ColorSelectedGradientBottom
+                                                         borderColor:k7ColorSelectedBorder
+                                                        borderWidth:k7DefaultBorderWidth
+                                                  cornerRadiusFactor:k7DefaultCornerRadiusFactor];
         }
         
         self.style = style;
@@ -105,10 +94,14 @@
     // Create Label
     self.label = [[UILabel alloc] init];
     self.label.backgroundColor = [UIColor clearColor];
-    self.label.text = self.name;
+    if (self.showComma){
+        self.label.text = [NSString stringWithFormat:@"%@,", self.name];
+    } else {
+        self.label.text = self.name;
+    }
     [self addSubview:self.label];
     
-    self.textView = [[UITextView alloc] init];
+    self.textView = [[THContactTextField alloc] init];
     self.textView.delegate = self;
     self.textView.hidden = YES;
     [self addSubview:self.textView];
@@ -118,6 +111,9 @@
     tapGesture.numberOfTapsRequired = 1;
     tapGesture.numberOfTouchesRequired = 1;
     [self addGestureRecognizer:tapGesture];
+    
+    self.maxWidth = 2 * kHorizontalPadding;
+    self.minWidth = 2 * kVerticalPadding;
     
     [self adjustSize];
     
@@ -130,7 +126,22 @@
     CGRect frame = self.label.frame;
     frame.origin.x = kHorizontalPadding;
     frame.origin.y = kVerticalPadding;
+    
+    CGFloat maxWidth = self.maxWidth - 2 * kHorizontalPadding;
+    CGFloat minWidth = self.minWidth - 2 * kHorizontalPadding;
+    
+    if (minWidth < maxWidth) {
+        if (frame.size.width < minWidth) {
+            frame.size.width = minWidth;
+        }else{
+            if (frame.size.width > maxWidth ) {
+                frame.size.width = maxWidth;
+            }
+        }
+    }
+
     self.label.frame = frame;
+
     
     // Adjust view frame
     self.bounds = CGRectMake(0, 0, frame.size.width + 2 * kHorizontalPadding, frame.size.height + 2 * kVerticalPadding);
@@ -157,18 +168,16 @@
     if ([self.delegate respondsToSelector:@selector(contactBubbleWasSelected:)]){
         [self.delegate contactBubbleWasSelected:self];
     }
-
+    
     CALayer *viewLayer = [self layer];
     viewLayer.borderColor = self.selectedStyle.borderColor.CGColor;
-    
     self.gradientLayer.colors = [NSArray arrayWithObjects:(id)[self.selectedStyle.gradientTop CGColor], (id)[self.selectedStyle.gradientBottom CGColor], nil];
-
+    
     self.label.textColor = self.selectedStyle.textColor;
     self.layer.borderWidth = self.selectedStyle.borderWidth;
     if (self.selectedStyle.cornerRadiusFactor > 0) {
         self.layer.cornerRadius = self.bounds.size.height / self.selectedStyle.cornerRadiusFactor;
-    }
-    else {
+    } else {
         self.layer.cornerRadius = 0;
     }
     
@@ -208,39 +217,32 @@
 
 #pragma mark - UITextViewDelegate
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
-{
+- (void)textFieldDidHitBackspaceWithEmptyText:(THContactTextField *)textView{
+ 
     self.textView.hidden = NO;
     
-    if ( [text isEqualToString:@"\n"] ) { // Return key was pressed
-        return NO;
-    }
-    
     // Capture "delete" key press when cell is empty
-    if ([textView.text isEqualToString:@""] && [text isEqualToString:@""]){
-        if ([self.delegate respondsToSelector:@selector(contactBubbleShouldBeRemoved:)]){
-            [self.delegate contactBubbleShouldBeRemoved:self];
-        }
+    if ([self.delegate respondsToSelector:@selector(contactBubbleShouldBeRemoved:)]){
+        [self.delegate contactBubbleShouldBeRemoved:self];
+    }
+}
+
+- (void)textFieldDidChange:(THContactTextField *)textField{
+    
+    [self unSelect];
+    if ([self.delegate respondsToSelector:@selector(contactBubbleWasUnSelected:)]){
+        [self.delegate contactBubbleWasUnSelected:self];
     }
     
-    if (self.isSelected){
-        self.textView.text = @"";
-        [self unSelect];
-        if ([self.delegate respondsToSelector:@selector(contactBubbleWasUnSelected:)]){
-            [self.delegate contactBubbleWasUnSelected:self];
-        }
-    }
-    
-    return YES;
 }
 
 #pragma mark - UITextInputTraits
 
-- (void) setKeyboardAppearance:(UIKeyboardAppearance)keyboardAppearance {
+- (void)setKeyboardAppearance:(UIKeyboardAppearance)keyboardAppearance {
     self.textView.keyboardAppearance = keyboardAppearance;
 }
 
-- (UIKeyboardAppearance) keyboardAppearance {
+- (UIKeyboardAppearance)keyboardAppearance {
     return self.textView.keyboardAppearance;
 }
 

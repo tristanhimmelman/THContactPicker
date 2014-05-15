@@ -29,9 +29,9 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     if (self) {
         // Custom initialization
         self.title = @"Contacts";
-        self.contacts = [NSArray arrayWithObjects:@"Tris tan",
-                         @"John",@"Himmelman", @"Nicole",@"Robertson", @"Nicholas",@"Barss",
-                         @"Andrew",@"Sarasin", @"Mike",@"Slon", @"Eric",@"Salpeter", nil];
+        self.contacts = [NSArray arrayWithObjects:@"Tristan Himmelman",
+                         @"John Snow", @"Alex Martin", @"Nicolai Small",@"Thomas Lee", @"Nicholas Hudson", @"Bob Barss",
+                         @"Andrew Stall", @"Marc Sarasin", @"Mike Beatson",@"Erica Slon", @"Eric Anderson", @"Josh Salpeter", nil];
     }
     return self;
 }
@@ -43,55 +43,40 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
         [self setEdgesForExtendedLayout:UIRectEdgeBottom|UIRectEdgeLeft|UIRectEdgeRight];
     }
-    
-    UIBarButtonItem * barButton = [[UIBarButtonItem alloc] initWithTitle:@"Remove All"
-                                                                   style:UIBarButtonItemStylePlain
-                                                                  target:self
-                                                                  action:@selector(clearSelectedContacts:)];
-    self.navigationItem.rightBarButtonItem = barButton;
-    self.placeholderString  = @"Who are you with?";
-    
-
-    
+        
     // Initialize and add Contact Picker View
-    _contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kPickerViewHeight)];
-    _contactPickerView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth;
-    _contactPickerView.delegate = self;
-    [_contactPickerView setPlaceholderString:_placeholderString];
-    [self.view addSubview:_contactPickerView];
+    self.contactPickerView = [[THContactPickerView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, kPickerViewHeight)];
+    self.contactPickerView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleWidth;
+    self.contactPickerView.delegate = self;
+    [self.contactPickerView setPlaceholderLabelText:@"Who would you like to message?"];
+    [self.contactPickerView setPromptLabelText:@"To:"];
+    //[self.contactPickerView setLimitToOne:YES];
+    [self.view addSubview:self.contactPickerView];
     
-    CALayer *layer = [_contactPickerView layer];
+    CALayer *layer = [self.contactPickerView layer];
     [layer setShadowColor:[[UIColor colorWithRed:225.0/255.0 green:226.0/255.0 blue:228.0/255.0 alpha:1] CGColor]];
     [layer setShadowOffset:CGSizeMake(0, 2)];
     [layer setShadowOpacity:1];
     [layer setShadowRadius:1.0f];
     
     // Fill the rest of the view with the table view
-    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds
-                                                  style:UITableViewStylePlain];
-    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
-    self.tableView.contentInset = UIEdgeInsetsMake(self.tableView.contentInset.top,
-                                                   self.tableView.contentInset.left,
-                                                   self.tableView.contentInset.bottom,
-                                                   self.tableView.contentInset.right);
-    
+    CGRect tableFrame = CGRectMake(0, self.contactPickerView.frame.size.height, self.view.frame.size.width, self.view.frame.size.height - self.contactPickerView.frame.size.height);
+    self.tableView = [[UITableView alloc] initWithFrame:tableFrame style:UITableViewStylePlain];
+    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.view insertSubview:self.tableView belowSubview:self.contactPickerView];
 }
 
+- (void)viewDidLayoutSubviews {
+    [self adjustTableFrame];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
-    [self adjustTableViewInsets];
     /*Register for keyboard notifications*/
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardDidShow:)
-                                                 name:UIKeyboardDidShowNotification
-                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardDidHide:)
-                                                 name:UIKeyboardDidHideNotification
-                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -109,7 +94,6 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
 
 #pragma mark - Publick properties
 
-
 - (NSArray *)filteredContacts {
     if (!_filteredContacts) {
         _filteredContacts = _contacts;
@@ -117,12 +101,7 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     return _filteredContacts;
 }
 
-- (void)setPlaceholderString:(NSString *)placeholderString {
-    _placeholderString = placeholderString;
-    [self.contactPickerView setPlaceholderString:_placeholderString];
-}
-
-- (void)adjustTableViewInsetTop:(CGFloat) topInset bottom:(CGFloat) bottomInset {
+- (void)adjustTableViewInsetTop:(CGFloat)topInset bottom:(CGFloat)bottomInset {
     self.tableView.contentInset = UIEdgeInsetsMake(topInset,
                                                    self.tableView.contentInset.left,
                                                    bottomInset,
@@ -130,7 +109,7 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     self.tableView.scrollIndicatorInsets = self.tableView.contentInset;
 }
 
-- (NSInteger) selectedCount {
+- (NSInteger)selectedCount {
     return self.privateSelectedContacts.count;
 }
 
@@ -145,18 +124,19 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
 
 #pragma mark - Private methods
 
-- (void)adjustTableViewInsetTop:(CGFloat) topInset {
-    [self adjustTableViewInsetTop:topInset
-                           bottom:self.tableView.contentInset.bottom];
+- (void)adjustTableFrame {
+    CGFloat yOffset = self.contactPickerView.frame.origin.y + self.contactPickerView.frame.size.height;
+    
+    CGRect tableFrame = CGRectMake(0, yOffset, self.view.frame.size.width, self.view.frame.size.height - yOffset);
+    self.tableView.frame = tableFrame;
 }
 
-- (void)adjustTableViewInsetBottom:(CGFloat) bottomInset {
-    [self adjustTableViewInsetTop:self.tableView.contentInset.top
-                           bottom:bottomInset];
+- (void)adjustTableViewInsetTop:(CGFloat)topInset {
+    [self adjustTableViewInsetTop:topInset bottom:self.tableView.contentInset.bottom];
 }
 
-- (void)adjustTableViewInsets {
-    [self adjustTableViewInsetTop:self.contactPickerView.frame.size.height];
+- (void)adjustTableViewInsetBottom:(CGFloat)bottomInset {
+    [self adjustTableViewInsetTop:self.tableView.contentInset.top bottom:bottomInset];
 }
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
@@ -168,7 +148,7 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
 }
 
 - (NSString *)titleForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return [self.contacts objectAtIndex:indexPath.row];
+    return [self.filteredContacts objectAtIndex:indexPath.row];
 }
 
 - (void) didChangeSelectedItems {
@@ -239,7 +219,9 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
 }
 
 - (void)contactPickerDidResize:(THContactPickerView *)contactPickerView {
-    [self adjustTableViewInsets];
+    CGRect frame = self.tableView.frame;
+    frame.origin.y = contactPickerView.frame.size.height + contactPickerView.frame.origin.y;
+    self.tableView.frame = frame;
 }
 
 - (void)contactPickerDidRemoveContact:(id)contact {
@@ -251,26 +233,18 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     [self didChangeSelectedItems];
 }
 
-- (void)clearSelectedContacts:(id)sender {
-    [self.contactPickerView removeAllContacts];
-    [self.privateSelectedContacts removeAllObjects];
-    self.filteredContacts = self.contacts;
-    [self didChangeSelectedItems];
-    [self.tableView reloadData];
-}
-
 #pragma  mark - NSNotificationCenter
 
 - (void)keyboardDidShow:(NSNotification *)notification {
-    NSDictionary* info = [notification userInfo];
+    NSDictionary *info = [notification userInfo];
     CGRect kbRect = [self.view convertRect:[[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:self.view.window];
-    [self adjustTableViewInsetBottom:self.view.bounds.size.height - kbRect.origin.y];
+    [self adjustTableViewInsetBottom:self.tableView.frame.origin.y + self.tableView.frame.size.height - kbRect.origin.y];
 }
 
 - (void)keyboardDidHide:(NSNotification *)notification {
-    NSDictionary* info = [notification userInfo];
+    NSDictionary *info = [notification userInfo];
     CGRect kbRect = [self.view convertRect:[[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:self.view.window];
-    [self adjustTableViewInsetBottom:self.view.bounds.size.height - kbRect.origin.y];
+    [self adjustTableViewInsetBottom:self.tableView.frame.origin.y + self.tableView.frame.size.height - kbRect.origin.y];
 }
 
 @end

@@ -9,11 +9,15 @@
 @class THContactTextField;
 
 @protocol THContactTextFieldDelegate<UITextFieldDelegate>
+
 @optional
 - (void)textFieldDidChange:(THContactTextField *)textField;
 - (void)textFieldDidHitBackspaceWithEmptyText:(THContactTextField *)textField;
+
 @end
 
 @interface THContactTextField : UITextField
-@property (nonatomic, assign)id <THContactTextFieldDelegate>delegate;
+
+@property (nonatomic, assign) id <THContactTextFieldDelegate>delegate;
+
 @end
