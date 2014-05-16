@@ -376,6 +376,7 @@
         if (self.contacts.count == 0){
             lineCount = 0;
             textViewFrame.origin.x = [self firstLineXOffset];
+            textViewFrame.size.width = self.bounds.size.width - textViewFrame.origin.x;
         }
     }
     
