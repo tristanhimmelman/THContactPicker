@@ -26,6 +26,7 @@
 @property (nonatomic, assign) BOOL limitToOne;
 @property (nonatomic, assign) CGFloat verticalPadding;
 @property (nonatomic, strong) UIFont *font;
+@property (nonatomic, readwrite, getter = isReadOnly) BOOL readOnly;
 
 - (void)addContact:(id)contact withName:(NSString *)name;
 - (void)removeContact:(id)contact;

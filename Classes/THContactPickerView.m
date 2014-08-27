@@ -136,6 +136,9 @@
     self.textView.text = @"";
     
     THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name style:self.bubbleStyle selectedStyle:self.bubbleSelectedStyle showComma:!self.limitToOne];
+    
+    contactBubble.readOnly = self.readOnly;
+    
     contactBubble.keyboardAppearance = self.keyboardAppearance;
     if (self.font != nil){
         [contactBubble setFont:self.font];
@@ -238,6 +241,16 @@
     return [self.textView becomeFirstResponder];
 }
 
+- (void) setReadOnly:(BOOL)readOnly
+{
+    _readOnly = readOnly;
+    
+    for (id contact in [self.contacts allKeys]){
+        THContactBubble *contactBubble = [self.contacts objectForKey:contact];
+        contactBubble.readOnly = readOnly;
+    }
+    
+}
 #pragma mark - Private functions
 
 - (void)scrollToBottomWithAnimation:(BOOL)animated {
@@ -415,6 +428,10 @@
 
 #pragma mark - THContactTextFieldDelegate
 
+- (BOOL) textFieldShouldBeginEditing:(UITextField *)textField
+{
+    return !self.isReadOnly;
+}
 - (void)textFieldDidHitBackspaceWithEmptyText:(THContactTextField *)textView {
     self.textView.hidden = NO;
     
