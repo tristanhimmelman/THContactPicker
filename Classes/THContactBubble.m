@@ -194,6 +194,11 @@
 
 #pragma mark - UITextViewDelegate
 
+- (BOOL) textViewShouldBeginEditing:(UITextView *)textView
+{
+    return !self.isReadOnly;
+}
+
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     self.textView.hidden = NO;
     

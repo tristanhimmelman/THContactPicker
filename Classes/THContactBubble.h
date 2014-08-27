@@ -29,6 +29,7 @@
 @property (nonatomic, assign) BOOL showComma;
 @property (nonatomic, assign) id <THContactBubbleDelegate>delegate;
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
+@property (nonatomic, readwrite, getter = isReadOnly) BOOL readOnly;
 
 @property (nonatomic, strong) THBubbleStyle *style;
 @property (nonatomic, strong) THBubbleStyle *selectedStyle;
