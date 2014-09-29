@@ -22,10 +22,28 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (BOOL)keyboardInputShouldDelete:(UITextField *)textField {
+    BOOL shouldDelete = YES;
+    
+    if ([UITextField instancesRespondToSelector:_cmd]) {
+        BOOL (*keyboardInputShouldDelete)(id, SEL, UITextField *) = (BOOL (*)(id, SEL, UITextField *))[UITextField instanceMethodForSelector:_cmd];
+        
+        if (keyboardInputShouldDelete) {
+            shouldDelete = keyboardInputShouldDelete(self, _cmd, textField);
+        }
+    }
+    
+    if (![textField.text length] && [[[UIDevice currentDevice] systemVersion] intValue] >= 8) {
+        [self deleteBackward];
+    }
+    
+    return shouldDelete;
+}
+
 - (void)deleteBackward {
     BOOL isTextFieldEmpty = (self.text.length == 0);
     if (isTextFieldEmpty){
-        if ([self.delegate respondsToSelector:@selector(textFieldDidHitBackspaceWithEmptyText:)]){
+        if (self.delegate && [self.delegate respondsToSelector:@selector(textFieldDidHitBackspaceWithEmptyText:)]){
             [self.delegate textFieldDidHitBackspaceWithEmptyText:self];
         }
     }
@@ -33,8 +51,10 @@
 }
 
 - (void)textFieldTextDidChange:(NSNotification *)notification {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(textFieldDidChange:)]){
-        [self.delegate textFieldDidChange:self];
+    if (notification.object == self) { //Since THContactBubble.textView is a THContactTextField
+        if (self.delegate && [self.delegate respondsToSelector:@selector(textFieldDidChange:)]){
+            [self.delegate textFieldDidChange:self];
+        }
     }
 }
 

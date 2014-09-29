@@ -7,6 +7,11 @@
 //
 
 #import "THContactBubble.h"
+#import "THContactTextField.h"
+
+@interface THContactBubble ()<THContactTextFieldDelegate>
+
+@end
 
 @implementation THContactBubble
 
@@ -96,7 +101,7 @@
     }
     [self addSubview:self.label];
     
-    self.textView = [[UITextView alloc] init];
+    self.textView = [[THContactTextField alloc] init];
     self.textView.delegate = self;
     self.textView.hidden = YES;
     [self addSubview:self.textView];
@@ -106,6 +111,9 @@
     tapGesture.numberOfTapsRequired = 1;
     tapGesture.numberOfTouchesRequired = 1;
     [self addGestureRecognizer:tapGesture];
+    
+    self.maxWidth = 2 * kHorizontalPadding;
+    self.minWidth = 2 * kVerticalPadding;
     
     [self adjustSize];
     
@@ -118,7 +126,22 @@
     CGRect frame = self.label.frame;
     frame.origin.x = kHorizontalPadding;
     frame.origin.y = kVerticalPadding;
+    
+    CGFloat maxWidth = self.maxWidth - 2 * kHorizontalPadding;
+    CGFloat minWidth = self.minWidth - 2 * kHorizontalPadding;
+    
+    if (minWidth < maxWidth) {
+        if (frame.size.width < minWidth) {
+            frame.size.width = minWidth;
+        }else{
+            if (frame.size.width > maxWidth ) {
+                frame.size.width = maxWidth;
+            }
+        }
+    }
+
     self.label.frame = frame;
+
     
     // Adjust view frame
     self.bounds = CGRectMake(0, 0, frame.size.width + 2 * kHorizontalPadding, frame.size.height + 2 * kVerticalPadding);
@@ -216,6 +239,23 @@
         
     return YES;
 }
+
+- (void)textFieldDidHitBackspaceWithEmptyText:(THContactTextField *)textView {
+    self.textView.hidden = NO;
+    
+    // Capture "delete" key press when cell is empty
+    if ([self.delegate respondsToSelector:@selector(contactBubbleShouldBeRemoved:)]){
+        [self.delegate contactBubbleShouldBeRemoved:self];
+    }
+}
+
+//- (void)textFieldDidChange:(THContactTextField *)textField{
+//    
+//    [self unSelect];
+//    if ([self.delegate respondsToSelector:@selector(contactBubbleWasUnSelected:)]){
+//        [self.delegate contactBubbleWasUnSelected:self];
+//    }
+//}
 
 #pragma mark - UITextInputTraits
 

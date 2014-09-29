@@ -122,12 +122,26 @@
     [self layoutView];
 }
 
+- (void)setPlaceholderLabelTextColor:(UIColor *)color{
+    self.placeholderLabel.textColor = color;
+}
+
+- (void)setPromptLabelTextColor:(UIColor *)color{
+    self.promptLabel.textColor = color;
+}
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor{
+    self.scrollView.backgroundColor = backgroundColor;
+    [super setBackgroundColor:backgroundColor];
+}
+
 - (void)addContact:(id)contact withName:(NSString *)name {
     id contactKey = [NSValue valueWithNonretainedObject:contact];
     if ([self.contactKeys containsObject:contactKey]){
         NSLog(@"Cannot add the same object twice to ContactPickerView");
         return;
     }
+    
     if (self.contactKeys.count == 1 && self.limitToOne){
         THContactBubble *contactBubble = [self.contacts objectForKey:[self.contactKeys firstObject]];
         [self removeContactBubble:contactBubble];
@@ -136,6 +150,8 @@
     self.textView.text = @"";
     
     THContactBubble *contactBubble = [[THContactBubble alloc] initWithName:name style:self.bubbleStyle selectedStyle:self.bubbleSelectedStyle showComma:!self.limitToOne];
+    contactBubble.maxWidth = self.frame.size.width - self.promptLabel.frame.origin.x - 2 * kHorizontalPadding - 2 * kHorizontalSidePadding;
+    contactBubble.minWidth = kTextViewMinWidth + 2 * kHorizontalPadding;
     contactBubble.keyboardAppearance = self.keyboardAppearance;
     if (self.font != nil){
         [contactBubble setFont:self.font];
@@ -363,6 +379,7 @@
         if (self.contacts.count == 0){
             lineCount = 0;
             textViewFrame.origin.x = [self firstLineXOffset];
+            textViewFrame.size.width = self.bounds.size.width - textViewFrame.origin.x;
         }
     }
     
