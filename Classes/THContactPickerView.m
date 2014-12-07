@@ -81,7 +81,6 @@
     self.textView = [[THContactTextField alloc] init];
     self.textView.delegate = self;
     self.textView.autocorrectionType = UITextAutocorrectionTypeNo;
-    [self selectTextView];
     
     // Add shadow to bottom border
     self.backgroundColor = [UIColor whiteColor];
