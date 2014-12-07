@@ -463,6 +463,13 @@
     }
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+	if ([self.delegate respondsToSelector:@selector(contactPickerTextFieldShouldReturn:)]){
+		return [self.delegate contactPickerTextFieldShouldReturn:textField];
+	}
+	return YES;
+}
+
 #pragma mark - THContactBubbleDelegate Functions
 
 - (void)contactBubbleWasSelected:(THContactBubble *)contactBubble {

@@ -233,6 +233,15 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     [self didChangeSelectedItems];
 }
 
+- (BOOL)contactPickerTextFieldShouldReturn:(UITextField *)textField {
+	if (textField.text.length > 0){
+		NSString *contact = [[NSString alloc] initWithString:textField.text];
+		[self.privateSelectedContacts addObject:contact];
+		[self.contactPickerView addContact:contact withName:textField.text];
+	}
+	return YES;
+}
+
 #pragma  mark - NSNotificationCenter
 
 - (void)keyboardDidShow:(NSNotification *)notification {
