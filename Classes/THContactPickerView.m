@@ -12,6 +12,8 @@
 
 @interface THContactPickerView ()<THContactTextFieldDelegate>{
     BOOL _shouldSelectTextView;
+	int _lineCount;
+	CGRect _frameOfLastBubble;
 }
 
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -160,19 +162,24 @@
     contactBubble.delegate = self;
     [self.contacts setObject:contactBubble forKey:contactKey];
     [self.contactKeys addObject:contactKey];
-    
+
+	// need to layout the contacts so the newly added contact doesn't animate from (0,0)
+	[self layoutContactBubbles];
+	
     if (self.selectedContactBubble){
         [self.selectedContactBubble unSelect];
         [self selectTextView];
     }
     
     // update layout
-    [self setNeedsLayout];
-    
-    // scroll to bottom
-    _shouldSelectTextView = YES;
-    [self scrollToBottomWithAnimation:YES];
-    // after scroll animation [self selectTextView] will be called
+	[UIView animateWithDuration:0.2 animations:^{
+		[self layoutScrollView];
+	} completion:^(BOOL finished) {
+		// scroll to bottom
+		_shouldSelectTextView = YES;
+		[self scrollToBottomWithAnimation:YES];
+		// after scroll animation [self selectTextView] will be called
+	}];
 }
 
 - (void)selectTextView {
@@ -197,22 +204,7 @@
 
 - (void)removeContact:(id)contact {
     id contactKey = [NSValue valueWithNonretainedObject:contact];
-    
-    // Remove contactBubble from view
-    THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
-    [contactBubble removeFromSuperview];
-    
-    // Remove contact from memory
-    [self.contacts removeObjectForKey:contactKey];
-    [self.contactKeys removeObject:contactKey];
-    
-    // update layout
-    [self setNeedsLayout];
-
-    [self selectTextView];
-    self.textView.text = @"";
-    
-    [self scrollToBottomWithAnimation:NO];
+	[self removeContactByKey:contactKey];
 }
 
 - (void)setPlaceholderLabelText:(NSString *)text {
@@ -286,6 +278,7 @@
 }
 
 - (void)removeContactByKey:(id)contactKey {
+	
     // Remove contactBubble from view
     THContactBubble *contactBubble = [self.contacts objectForKey:contactKey];
     [contactBubble removeFromSuperview];
@@ -293,14 +286,18 @@
     // Remove contact from memory
     [self.contacts removeObjectForKey:contactKey];
     [self.contactKeys removeObject:contactKey];
-  
-    // update layout
-    [self setNeedsLayout];
-  
-    [self selectTextView];
-    self.textView.text = @"";
-  
-    [self scrollToBottomWithAnimation:NO];
+
+	self.textView.text = @"";
+	[self selectTextView];
+
+	[self layoutContactBubbles];
+	
+	// update layout
+	[UIView animateWithDuration:0.2 animations:^{
+		[self layoutScrollView];
+	} completion:^(BOOL finished) {
+		[self scrollToBottomWithAnimation:NO];
+	}];
 }
 
 - (id)contactForContactBubble:(THContactBubble *)contactBubble {
@@ -328,109 +325,121 @@
     }
 }
 
+- (void)layoutContactBubbles {
+	_frameOfLastBubble = CGRectNull;
+	_lineCount = 0;
+	
+	// Loop through contacts and position/add them to the view
+	for (id contactKey in self.contactKeys){
+		THContactBubble *contactBubble = (THContactBubble *)[self.contacts objectForKey:contactKey];
+		CGRect bubbleFrame = contactBubble.frame;
+		
+		if (CGRectIsNull(_frameOfLastBubble)){
+			// First contact bubble
+			bubbleFrame.origin.x = [self firstLineXOffset];
+			bubbleFrame.origin.y = kVerticalPadding + self.verticalPadding;
+		} else {
+			// Check if contact bubble will fit on the current line
+			CGFloat width = bubbleFrame.size.width + 2 * kHorizontalPadding;
+			if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastBubble.origin.x - _frameOfLastBubble.size.width - width >= 0){
+				// add to the same line
+				// Place contact bubble just after last bubble on the same line
+				bubbleFrame.origin.x = _frameOfLastBubble.origin.x + _frameOfLastBubble.size.width + kHorizontalPadding * 2;
+				bubbleFrame.origin.y = _frameOfLastBubble.origin.y;
+			} else {
+				// No space on current line, jump to next line
+				_lineCount++;
+				bubbleFrame.origin.x = kHorizontalSidePadding;
+				bubbleFrame.origin.y = (_lineCount * self.lineHeight) + kVerticalPadding + self.verticalPadding;
+			}
+		}
+		_frameOfLastBubble = bubbleFrame;
+		contactBubble.frame = bubbleFrame;
+		
+		// Add contact bubble if it hasn't been added
+		if (contactBubble.superview == nil){
+			[self.scrollView addSubview:contactBubble];
+		}
+	}
+	
+	// Now add the textView after the contact bubbles
+	CGFloat minWidth = kTextViewMinWidth + 2 * kHorizontalPadding;
+	CGFloat textViewHeight = self.lineHeight - 2 * kVerticalPadding;
+	CGRect textViewFrame = CGRectMake(0, 0, self.textView.frame.size.width, textViewHeight);
+	
+	// Check if we can add the text field on the same line as the last contact bubble
+	if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastBubble.origin.x - _frameOfLastBubble.size.width - minWidth >= 0){ // add to the same line
+		textViewFrame.origin.x = _frameOfLastBubble.origin.x + _frameOfLastBubble.size.width + kHorizontalPadding;
+		textViewFrame.size.width = self.frame.size.width - textViewFrame.origin.x;
+	} else {
+		// place text view on the next line
+		_lineCount++;
+		
+		textViewFrame.origin.x = kHorizontalSidePadding;
+		textViewFrame.size.width = self.frame.size.width - 2 * kHorizontalPadding;
+		
+		if (self.contacts.count == 0){
+			_lineCount = 0;
+			textViewFrame.origin.x = [self firstLineXOffset];
+			textViewFrame.size.width = self.bounds.size.width - textViewFrame.origin.x;
+		}
+	}
+	
+	textViewFrame.origin.y = _lineCount * self.lineHeight + kVerticalPadding + self.verticalPadding;
+	self.textView.frame = textViewFrame;
+	
+	// Add text view if it hasn't been added
+	self.textView.center = CGPointMake(self.textView.center.x, _lineCount * self.lineHeight + textViewHeight / 2 + kVerticalPadding + self.verticalPadding);
+	
+	if (self.textView.superview == nil){
+		[self.scrollView addSubview:self.textView];
+	}
+	
+	// Hide the text view if we are limiting number of selected contacts to 1 and a contact has already been added
+	if (self.limitToOne && self.contacts.count >= 1){
+		self.textView.hidden = YES;
+		_lineCount = 0;
+	}
+	
+	// Show placeholder if no there are no contacts
+	if (self.contacts.count == 0){
+		self.placeholderLabel.hidden = NO;
+	} else {
+		self.placeholderLabel.hidden = YES;
+	}
+}
+
 - (void)layoutSubviews {
 	[super layoutSubviews];
 	
-    CGRect frameOfLastBubble = CGRectNull;
-    int lineCount = 0;
-    
-    // Loop through selectedContacts and position/add them to the view
-    for (id contactKey in self.contactKeys){
-        THContactBubble *contactBubble = (THContactBubble *)[self.contacts objectForKey:contactKey];
-        CGRect bubbleFrame = contactBubble.frame;
-        
-        if (CGRectIsNull(frameOfLastBubble)){ // first line
-            bubbleFrame.origin.x = [self firstLineXOffset];
-            bubbleFrame.origin.y = kVerticalPadding + self.verticalPadding;
-        } else {
-            // Check if contact bubble will fit on the current line
-            CGFloat width = bubbleFrame.size.width + 2 * kHorizontalPadding;
-            if (self.frame.size.width - kHorizontalSidePadding - frameOfLastBubble.origin.x - frameOfLastBubble.size.width - width >= 0){ // add to the same line
-                                                                                                                 // Place contact bubble just after last bubble on the same line
-                bubbleFrame.origin.x = frameOfLastBubble.origin.x + frameOfLastBubble.size.width + kHorizontalPadding * 2;
-                bubbleFrame.origin.y = frameOfLastBubble.origin.y;
-            } else { // No space on line, jump to next line
-                lineCount++;
-                bubbleFrame.origin.x = kHorizontalSidePadding;
-                bubbleFrame.origin.y = (lineCount * self.lineHeight) + kVerticalPadding + 	self.verticalPadding;
-            }
-        }
-        frameOfLastBubble = bubbleFrame;
-        contactBubble.frame = bubbleFrame;
-        
-        // Add contact bubble if it hasn't been added
-        if (contactBubble.superview == nil){
-            [self.scrollView addSubview:contactBubble];
-        }
-    }
-    
-    // Now add a textView after the comment bubbles
-    CGFloat minWidth = kTextViewMinWidth + 2 * kHorizontalPadding;
-    CGFloat textViewHeight = self.lineHeight - 2 * kVerticalPadding;
-    CGRect textViewFrame = CGRectMake(0, 0, self.textView.frame.size.width, textViewHeight);
+	[self layoutContactBubbles];
+	
+	[self layoutScrollView];
+}
 
-    // Check if we can add the text field on the same line as the last contact bubble
-    if (self.frame.size.width - kHorizontalSidePadding - frameOfLastBubble.origin.x - frameOfLastBubble.size.width - minWidth >= 0){ // add to the same line
-        textViewFrame.origin.x = frameOfLastBubble.origin.x + frameOfLastBubble.size.width + kHorizontalPadding;
-        textViewFrame.size.width = self.frame.size.width - textViewFrame.origin.x;
-    } else { // place text view on the next line
-        lineCount++;
-        
-        textViewFrame.origin.x = kHorizontalSidePadding;
-        textViewFrame.size.width = self.frame.size.width - 2 * kHorizontalPadding;
-        
-        if (self.contacts.count == 0){
-            lineCount = 0;
-            textViewFrame.origin.x = [self firstLineXOffset];
-            textViewFrame.size.width = self.bounds.size.width - textViewFrame.origin.x;
-        }
-    }
-    
-    textViewFrame.origin.y = lineCount * self.lineHeight + kVerticalPadding + self.verticalPadding;
-    self.textView.frame = textViewFrame;
-
-    // Add text view if it hasn't been added
-    self.textView.center = CGPointMake(self.textView.center.x, lineCount * self.lineHeight + textViewHeight / 2 + kVerticalPadding + self.verticalPadding);
-
-    if (self.textView.superview == nil){
-        [self.scrollView addSubview:self.textView];
-    }
-    
-    // Hide the text view if we are limiting number of selected contacts to 1 and a contact has already been added
-    if (self.limitToOne && self.contacts.count >= 1){
-        self.textView.hidden = YES;
-        lineCount = 0;
-    }
-    
-    // Adjust scroll view content size
-    CGRect frame = self.bounds;
-    CGFloat maxFrameHeight = self.maxNumberOfLines * self.lineHeight + 2 * self.verticalPadding; // limit frame to two lines of content
-    CGFloat newHeight = (lineCount + 1) * self.lineHeight + 2 * self.verticalPadding;
-    self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, newHeight);
-    
-    // Adjust frame of view if necessary
-    newHeight = (newHeight > maxFrameHeight) ? maxFrameHeight : newHeight;
-    if (self.frame.size.height != newHeight){
-        // Adjust self height
-        CGRect selfFrame = self.frame;
-        selfFrame.size.height = newHeight;
-        self.frame = selfFrame;
-        
-        // Adjust scroll view height
-        frame.size.height = newHeight;
-        self.scrollView.frame = frame;
-        
-        if ([self.delegate respondsToSelector:@selector(contactPickerDidResize:)]){
-            [self.delegate contactPickerDidResize:self];
-        }
-    }
-    
-    // Show placeholder if no there are no contacts
-    if (self.contacts.count == 0){
-        self.placeholderLabel.hidden = NO;
-    } else {
-        self.placeholderLabel.hidden = YES;
-    }
+- (void)layoutScrollView {
+	// Adjust scroll view content size
+	CGRect frame = self.bounds;
+	CGFloat maxFrameHeight = self.maxNumberOfLines * self.lineHeight + 2 * self.verticalPadding; // limit frame to two lines of content
+	CGFloat newHeight = (_lineCount + 1) * self.lineHeight + 2 * self.verticalPadding;
+	self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, newHeight);
+	
+	// Adjust frame of view if necessary
+	newHeight = (newHeight > maxFrameHeight) ? maxFrameHeight : newHeight;
+	if (self.frame.size.height != newHeight){
+		// Adjust self height
+		CGRect selfFrame = self.frame;
+		selfFrame.size.height = newHeight;
+		self.frame = selfFrame;
+		
+		// Adjust scroll view height
+		frame.size.height = newHeight;
+		self.scrollView.frame = frame;
+		
+		if ([self.delegate respondsToSelector:@selector(contactPickerDidResize:)]){
+			[self.delegate contactPickerDidResize:self];
+		}
+	}
 }
 
 #pragma mark - THContactTextFieldDelegate
