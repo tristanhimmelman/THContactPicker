@@ -1,14 +1,14 @@
 //
-//  THBubbleColor.m
+//  THContactViewStyle.m
 //  ContactPicker
 //
 //  Created by Dmitry Vorobjov on 12/6/12.
 //  Copyright (c) 2012 Tristan Himmelman. All rights reserved.
 //
 
-#import "THBubbleStyle.h"
+#import "THContactViewStyle.h"
 
-@implementation THBubbleStyle
+@implementation THContactViewStyle
 
 - (id)initWithTextColor:(UIColor *)textColor
             gradientTop:(UIColor *)gradientTop

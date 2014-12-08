@@ -1,5 +1,5 @@
 //
-//  THBubbleColor.h
+//  THContactViewStyle
 //  ContactPicker
 //
 //  Created by Dmitry Vorobjov on 12/6/12.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface THBubbleStyle : NSObject
+@interface THContactViewStyle : NSObject
 
 @property (nonatomic, strong) UIColor *textColor;
 @property (nonatomic, strong) UIColor *gradientTop;
