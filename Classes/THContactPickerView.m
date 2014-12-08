@@ -28,11 +28,12 @@
 
 @implementation THContactPickerView
 
-#define kVerticalViewPadding        5   // the amount of padding on top and bottom of the view
-#define kHorizontalPadding      0   // the amount of padding to the left and right of each contact bubble
-#define kHorizontalSidePadding  10  // the amount of padding on the left and right of the view
-#define kVerticalPadding        2   // amount of padding above and below each contact bubble
-#define kTextViewMinWidth       20  // minimum width of trailing text view
+#define kVerticalViewPadding		5   // the amount of padding on top and bottom of the view
+#define kHorizontalPadding			0   // the amount of padding to the left and right of each contact bubble
+#define kHorizontalSidePadding		10  // the amount of padding on the left and right of the view
+#define kVerticalPadding			2   // amount of padding above and below each contact bubble
+#define kTextViewMinWidth			20  // minimum width of trailing text view
+#define KMaxNumberOfLinesDefault	2
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
@@ -54,7 +55,8 @@
 
 - (void)setup {
     self.verticalPadding = kVerticalViewPadding;
-    
+	self.maxNumberOfLines = KMaxNumberOfLinesDefault;
+	
     self.contacts = [NSMutableDictionary dictionary];
     self.contactKeys = [NSMutableArray array];
     
@@ -118,7 +120,7 @@
     self.promptLabel.text = text;
     
     [self updateLabelFrames];
-    [self layoutView];
+    [self setNeedsLayout];
 }
 
 - (void)setPlaceholderLabelTextColor:(UIColor *)color{
@@ -165,7 +167,7 @@
     }
     
     // update layout
-    [self layoutView];
+    [self setNeedsLayout];
     
     // scroll to bottom
     _shouldSelectTextView = YES;
@@ -187,7 +189,7 @@
     [self.contactKeys removeAllObjects];
   
     // update layout
-    [self layoutView];
+    [self setNeedsLayout];
   
     self.textView.hidden = NO;
     self.textView.text = @"";
@@ -205,7 +207,7 @@
     [self.contactKeys removeObject:contactKey];
     
     // update layout
-    [self layoutView];
+    [self setNeedsLayout];
 
     [self selectTextView];
     self.textView.text = @"";
@@ -216,7 +218,7 @@
 - (void)setPlaceholderLabelText:(NSString *)text {
     self.placeholderLabel.text = text;
 
-    [self layoutView];
+    [self setNeedsLayout];
 }
 
 - (void)resignFirstResponder {
@@ -226,7 +228,7 @@
 - (void)setVerticalPadding:(CGFloat)viewPadding {
     _verticalPadding = viewPadding;
 
-    [self layoutView];
+    [self setNeedsLayout];
 }
 
 - (void)setBubbleStyle:(THBubbleStyle *)style selectedStyle:(THBubbleStyle *)selectedStyle {
@@ -293,7 +295,7 @@
     [self.contactKeys removeObject:contactKey];
   
     // update layout
-    [self layoutView];
+    [self setNeedsLayout];
   
     [self selectTextView];
     self.textView.text = @"";
@@ -326,7 +328,9 @@
     }
 }
 
-- (void)layoutView {
+- (void)layoutSubviews {
+	[super layoutSubviews];
+	
     CGRect frameOfLastBubble = CGRectNull;
     int lineCount = 0;
     
@@ -400,7 +404,7 @@
     
     // Adjust scroll view content size
     CGRect frame = self.bounds;
-    CGFloat maxFrameHeight = 2 * self.lineHeight + 2 * self.verticalPadding; // limit frame to two lines of content
+    CGFloat maxFrameHeight = self.maxNumberOfLines * self.lineHeight + 2 * self.verticalPadding; // limit frame to two lines of content
     CGFloat newHeight = (lineCount + 1) * self.lineHeight + 2 * self.verticalPadding;
     self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, newHeight);
     
@@ -484,11 +488,15 @@
 }
 
 - (void)contactBubbleWasUnSelected:(THContactBubble *)contactBubble {
-    if (self.selectedContactBubble != nil){
-        
-    }
     [self selectTextView];
-    self.textView.text = @"";
+	// transfer the text fromt he textField within the ContactBubble if there was any
+	// ***This is important if the user starts to type when a contact bubble is selected
+    self.textView.text = contactBubble.textField.text;
+
+	// trigger textFieldDidChange if there is text in the textField
+	if (self.textView.text.length > 0){
+		[self textFieldDidChange:self.textView];
+	}
 }
 
 - (void)contactBubbleShouldBeRemoved:(THContactBubble *)contactBubble {

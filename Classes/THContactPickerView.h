@@ -24,8 +24,10 @@
 
 @property (nonatomic, strong) THContactBubble *selectedContactBubble;
 @property (nonatomic, assign) IBOutlet id <THContactPickerDelegate>delegate;
-@property (nonatomic, assign) BOOL limitToOne;
-@property (nonatomic, assign) CGFloat verticalPadding;
+
+@property (nonatomic, assign) BOOL limitToOne;				// only allow the ContactPicker to add one contact
+@property (nonatomic, assign) CGFloat verticalPadding;		// amount of padding above and below each contact bubble
+@property (nonatomic, assign) NSInteger maxNumberOfLines;	// maximum number of lines the view will display before scrolling
 @property (nonatomic, strong) UIFont *font;
 
 - (void)addContact:(id)contact withName:(NSString *)name;

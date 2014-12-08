@@ -16,6 +16,7 @@
 		29A71BFA16448250005286F1 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 29A71BF916448250005286F1 /* Default.png */; };
 		29A71BFC16448250005286F1 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 29A71BFB16448250005286F1 /* Default@2x.png */; };
 		29A71BFE16448250005286F1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 29A71BFD16448250005286F1 /* Default-568h@2x.png */; };
+		6A7586D81A3523380014433A /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A7586D71A3523380014433A /* Launch Screen.xib */; };
 		6AE31FCC1644DB2C00505230 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AE31FCB1644DB2C00505230 /* QuartzCore.framework */; };
 		6B3B2DED183260AC00798513 /* THContactPickerViewControllerDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DEC183260AC00798513 /* THContactPickerViewControllerDemo.m */; };
 		6B3B2DEF1832679900798513 /* THContactPickerViewControllerDemo.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6B3B2DEE1832679900798513 /* THContactPickerViewControllerDemo.xib */; };
@@ -39,6 +40,7 @@
 		29A71BF916448250005286F1 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		29A71BFB16448250005286F1 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		29A71BFD16448250005286F1 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		6A7586D71A3523380014433A /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		6AE31FCB1644DB2C00505230 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		6B3B2DEB183260AC00798513 /* THContactPickerViewControllerDemo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactPickerViewControllerDemo.h; sourceTree = "<group>"; };
 		6B3B2DEC183260AC00798513 /* THContactPickerViewControllerDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactPickerViewControllerDemo.m; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 				6B3B2DEB183260AC00798513 /* THContactPickerViewControllerDemo.h */,
 				6B3B2DEC183260AC00798513 /* THContactPickerViewControllerDemo.m */,
 				6B3B2DEE1832679900798513 /* THContactPickerViewControllerDemo.xib */,
+				6A7586D71A3523380014433A /* Launch Screen.xib */,
 			);
 			path = ContactPicker;
 			sourceTree = "<group>";
@@ -195,6 +198,7 @@
 				29A71BFC16448250005286F1 /* Default@2x.png in Resources */,
 				6B3B2DEF1832679900798513 /* THContactPickerViewControllerDemo.xib in Resources */,
 				29A71BFE16448250005286F1 /* Default-568h@2x.png in Resources */,
+				6A7586D81A3523380014433A /* Launch Screen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,7 +291,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ContactPicker/ContactPicker-Prefix.pch";
 				INFOPLIST_FILE = "ContactPicker/ContactPicker-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
@@ -300,7 +304,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ContactPicker/ContactPicker-Prefix.pch";
 				INFOPLIST_FILE = "ContactPicker/ContactPicker-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;

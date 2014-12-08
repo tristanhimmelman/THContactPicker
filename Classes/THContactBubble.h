@@ -25,7 +25,7 @@
 
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) UILabel *label;
-@property (nonatomic, strong) THContactTextField *textView; // used to capture keyboard touches when view is selected
+@property (nonatomic, strong) THContactTextField *textField; // used to capture keyboard touches when view is selected
 @property (nonatomic, assign) BOOL isSelected;
 @property (nonatomic, assign) BOOL showComma;
 @property (nonatomic, assign) CGFloat maxWidth;
