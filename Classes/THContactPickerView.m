@@ -460,7 +460,8 @@
 }
 
 - (void)textFieldDidChange:(THContactTextField *)textView{
-    if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]){
+    if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]
+     && !self.textField.markedTextRange) {
         [self.delegate contactPickerTextViewDidChange:textView.text];
     }
     
