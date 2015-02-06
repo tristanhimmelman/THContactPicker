@@ -126,6 +126,12 @@
     [self setNeedsLayout];
 }
 
+- (void)setPromptLabelAttributedText:(NSAttributedString *)attributedText {
+    self.promptLabel.attributedText = attributedText;
+    [self updateLabelFrames];
+    [self setNeedsLayout];
+}
+
 - (void)setPlaceholderLabelTextColor:(UIColor *)color{
     self.placeholderLabel.textColor = color;
 }
