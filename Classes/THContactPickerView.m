@@ -409,7 +409,7 @@
 	}
 	
 	// Show placeholder if no there are no contacts
-	if (self.contacts.count == 0){
+    if ([self.textField.text isEqualToString:@""] && self.contacts.count == 0 ){
 		self.placeholderLabel.hidden = NO;
 	} else {
 		self.placeholderLabel.hidden = YES;
