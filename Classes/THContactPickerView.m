@@ -163,6 +163,7 @@
     contactView.maxWidth = self.frame.size.width - self.promptLabel.frame.origin.x - 2 * kHorizontalPadding - 2 * kHorizontalSidePadding;
     contactView.minWidth = kTextViewMinWidth + 2 * kHorizontalPadding;
     contactView.keyboardAppearance = self.keyboardAppearance;
+    contactView.returnKeyType = self.returnKeyType;
     contactView.delegate = self;
 	[contactView setFont:self.font];
 	
@@ -556,6 +557,17 @@
 
 - (UIKeyboardAppearance)keyboardAppearance {
     return self.textField.keyboardAppearance;
+}
+
+- (void)setReturnKeyType:(UIReturnKeyType)returnKeyType {
+    self.textField.returnKeyType = returnKeyType;
+    for (THContactView *contactView in self.contacts) {
+        contactView.returnKeyType = returnKeyType;
+    }
+}
+
+- (UIReturnKeyType)returnKeyType {
+    return self.textField.returnKeyType;
 }
 
 @end
