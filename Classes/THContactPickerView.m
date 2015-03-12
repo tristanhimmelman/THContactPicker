@@ -283,6 +283,11 @@
     }
     
     [self removeContactByKey:contact];
+    [self selectTextView];
+
+    if (self.selectedContactView == contactView) {
+        self.selectedContactView = nil;
+    }
 }
 
 - (void)removeContactByKey:(id)contactKey {
@@ -295,7 +300,6 @@
     [self.contactKeys removeObject:contactKey];
 
 	self.textField.text = @"";
-	[self selectTextView];
 
 	// update layout
 	[self layoutContactViews];
