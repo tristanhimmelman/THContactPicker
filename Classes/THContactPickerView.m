@@ -173,6 +173,7 @@
     if (self.selectedContactView){
 		// if there is a selected contact, deselect it
         [self.selectedContactView unSelect];
+        self.selectedContactView = nil;
         [self selectTextView];
     }
 
