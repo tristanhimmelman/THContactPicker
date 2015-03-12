@@ -510,6 +510,10 @@
 }
 
 - (void)contactViewWasUnSelected:(THContactView *)contactView {
+    if (self.selectedContactView == contactView){
+        self.selectedContactView = nil;
+    }
+
     [self selectTextView];
 	// transfer the text fromt he textField within the ContactView if there was any
 	// ***This is important if the user starts to type when a contact view is selected
