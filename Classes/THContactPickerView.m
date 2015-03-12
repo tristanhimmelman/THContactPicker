@@ -185,7 +185,7 @@
 		[self layoutScrollView];
 	} completion:^(BOOL finished) {
 		// scroll to bottom
-		_shouldSelectTextView = YES;
+		_shouldSelectTextView = [self isFirstResponder];
 		[self scrollToBottomWithAnimation:YES];
 		// after scroll animation [self selectTextView] will be called
 	}];
@@ -224,6 +224,15 @@
 
 - (void)resignFirstResponder {
     [self.textField resignFirstResponder];
+}
+
+- (BOOL)isFirstResponder {
+	if ([self.textField isFirstResponder]){
+		return YES;
+	} else if (self.selectedContactView != nil){
+		return YES;
+	}
+	return NO;
 }
 
 - (void)setVerticalPadding:(CGFloat)viewPadding {
