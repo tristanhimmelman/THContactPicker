@@ -11,7 +11,6 @@
 #import "THContactTextField.h"
 
 @interface THContactPickerView ()<THContactTextFieldDelegate>{
-    BOOL _shouldSelectTextView;
 	int _lineCount;
 	CGRect _frameOfLastView;
 }
@@ -184,7 +183,6 @@
 		[self layoutScrollView];
 	} completion:^(BOOL finished) {
 		// scroll to bottom
-		_shouldSelectTextView = YES;
 		[self scrollToBottomWithAnimation:YES];
 		// after scroll animation [self selectTextView] will be called
 	}];
@@ -540,10 +538,7 @@
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
-    if (_shouldSelectTextView){
-        _shouldSelectTextView = NO;
-        [self selectTextView];
-    }
+    // No-op
 }
 
 #pragma mark - UITextInputTraits
