@@ -173,6 +173,7 @@
     if (self.selectedContactView){
 		// if there is a selected contact, deselect it
         [self.selectedContactView unSelect];
+        self.selectedContactView = nil;
         [self selectTextView];
     }
 
@@ -283,6 +284,11 @@
     }
     
     [self removeContactByKey:contact];
+    [self selectTextView];
+
+    if (self.selectedContactView == contactView) {
+        self.selectedContactView = nil;
+    }
 }
 
 - (void)removeContactByKey:(id)contactKey {
@@ -295,7 +301,6 @@
     [self.contactKeys removeObject:contactKey];
 
 	self.textField.text = @"";
-	[self selectTextView];
 
 	// update layout
 	[self layoutContactViews];
@@ -506,6 +511,10 @@
 }
 
 - (void)contactViewWasUnSelected:(THContactView *)contactView {
+    if (self.selectedContactView == contactView){
+        self.selectedContactView = nil;
+    }
+
     [self selectTextView];
 	// transfer the text fromt he textField within the ContactView if there was any
 	// ***This is important if the user starts to type when a contact view is selected

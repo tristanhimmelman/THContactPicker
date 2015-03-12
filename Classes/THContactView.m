@@ -188,6 +188,10 @@
 }
 
 - (void)unSelect {
+    if ([self.delegate respondsToSelector:@selector(contactViewWasUnSelected:)]){
+        [self.delegate contactViewWasUnSelected:self];
+    }
+    
     CALayer *viewLayer = [self layer];
     viewLayer.borderColor = self.style.borderColor.CGColor;
     
