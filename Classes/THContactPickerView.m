@@ -184,7 +184,6 @@
 	} completion:^(BOOL finished) {
 		// scroll to bottom
 		[self scrollToBottomWithAnimation:YES];
-		// after scroll animation [self selectTextView] will be called
 	}];
 }
 
