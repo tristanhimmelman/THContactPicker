@@ -248,4 +248,12 @@
     return self.textField.keyboardAppearance;
 }
 
+- (void)setReturnKeyType:(UIReturnKeyType)returnKeyType {
+    self.textField.returnKeyType = returnKeyType;
+}
+
+- (UIReturnKeyType)returnKeyType {
+    return self.textField.returnKeyType;
+}
+
 @end
