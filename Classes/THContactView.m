@@ -45,17 +45,11 @@
 #define k7ColorSelectedBorder nil
 
 - (id)initWithName:(NSString *)name {
-    if ([self initWithName:name style:nil selectedStyle:nil]) {
-
-    }
-    return self;
+    return [self initWithName:name style:nil selectedStyle:nil];
 }
 
 - (id)initWithName:(NSString *)name style:(THContactViewStyle *)style selectedStyle:(THContactViewStyle *)selectedStyle {
-    if ([self initWithName:name style:style selectedStyle:selectedStyle showComma:NO]){
-        
-    }
-    return self;
+    return [self initWithName:name style:style selectedStyle:selectedStyle showComma:NO];
 }
 
 - (id)initWithName:(NSString *)name style:(THContactViewStyle *)style selectedStyle:(THContactViewStyle *)selectedStyle showComma:(BOOL)showComma {
