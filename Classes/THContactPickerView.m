@@ -222,8 +222,12 @@
     [self setNeedsLayout];
 }
 
-- (void)resignFirstResponder {
-    [self.textField resignFirstResponder];
+- (BOOL)resignFirstResponder {
+    if ([self.textField isFirstResponder])
+    {
+        return [self.textField resignFirstResponder];
+    }
+    return [super resignFirstResponder];
 }
 
 - (BOOL)isFirstResponder {

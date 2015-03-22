@@ -33,7 +33,7 @@
 - (void)addContact:(id)contact withName:(NSString *)name;
 - (void)removeContact:(id)contact;
 - (void)removeAllContacts;
-- (void)resignFirstResponder;
+- (BOOL)resignFirstResponder;
 
 // View Customization
 - (void)setContactViewStyle:(THContactViewStyle *)color selectedStyle:(THContactViewStyle *)selectedColor;
