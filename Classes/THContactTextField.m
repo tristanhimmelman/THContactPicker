@@ -10,6 +10,8 @@
 
 @implementation THContactTextField
 
+@dynamic delegate;
+
 - (id)init {
     self = [super init];
     if (self) {
