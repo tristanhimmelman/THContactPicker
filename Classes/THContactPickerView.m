@@ -191,6 +191,53 @@
 	}];
 }
 
+- (void)addContact:(id)contact withName:(NSString *)name withStyle:(THContactViewStyle*)bubbleStyle andSelectedStyle:(THContactViewStyle*) selectedStyle {
+    id contactKey = [NSValue valueWithNonretainedObject:contact];
+    if ([self.contactKeys containsObject:contactKey]){
+        NSLog(@"Cannot add the same object twice to ContactPickerView");
+        return;
+    }
+    
+    if (self.contactKeys.count == 1 && self.limitToOne){
+        THContactView *contactView = [self.contacts objectForKey:[self.contactKeys firstObject]];
+        [self removeContactView:contactView];
+    }
+    
+    self.textField.text = @"";
+    
+    THContactView *contactView = [[THContactView alloc] initWithName:name style:bubbleStyle selectedStyle:self.contactViewSelectedStyle showComma:!self.limitToOne];
+    
+    contactView.maxWidth = self.frame.size.width - self.promptLabel.frame.origin.x - 2 * kHorizontalPadding - 2 * kHorizontalSidePadding;
+    contactView.minWidth = kTextViewMinWidth + 2 * kHorizontalPadding;
+    contactView.keyboardAppearance = self.keyboardAppearance;
+    contactView.returnKeyType = self.returnKeyType;
+    contactView.delegate = self;
+    [contactView setFont:self.font];
+    
+    [self.contacts setObject:contactView forKey:contactKey];
+    [self.contactKeys addObject:contactKey];
+    
+    if (self.selectedContactView){
+        // if there is a selected contact, deselect it
+        [self.selectedContactView unSelect];
+        self.selectedContactView = nil;
+        [self selectTextView];
+    }
+    
+    // update the position of the contacts
+    [self layoutContactViews];
+    
+    // update size of the scrollView
+    [UIView animateWithDuration:0.2 animations:^{
+        [self layoutScrollView];
+    } completion:^(BOOL finished) {
+        // scroll to bottom
+        _shouldSelectTextView = [self isFirstResponder];
+        [self scrollToBottomWithAnimation:YES];
+        // after scroll animation [self selectTextView] will be called
+    }];
+}
+
 - (void)selectTextView {
     self.textField.hidden = NO;
     [self.textField becomeFirstResponder];
