@@ -203,8 +203,16 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         [self.privateSelectedContacts addObject:contact];
         [self.contactPickerView addContact:contact withName:contactTilte];
+		
+//		UIColor *color = [UIColor blueColor];
+//		if (self.privateSelectedContacts.count % 2 == 0){
+//			color = [UIColor orangeColor];
+//		}
+//		THContactViewStyle *style = [[THContactViewStyle alloc] initWithTextColor:[UIColor whiteColor] backgroundColor:color cornerRadiusFactor:2.0];
+//		THContactViewStyle *selectedStyle = [[THContactViewStyle alloc] initWithTextColor:[UIColor whiteColor] backgroundColor:[UIColor greenColor] cornerRadiusFactor:2.0];
+//		[self.contactPickerView addContact:contact withName:contactTilte withStyle:style andSelectedStyle:selectedStyle];
     }
-    
+	
     self.filteredContacts = self.contacts;
     [self didChangeSelectedItems];
     [self.tableView reloadData];
