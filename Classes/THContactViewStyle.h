@@ -23,4 +23,11 @@
             borderColor:(UIColor *)borderColor
             borderWidth:(CGFloat)borderWidth
      cornerRadiusFactor:(CGFloat)cornerRadiusFactor;
+
+- (id)initWithTextColor:(UIColor *)textColor
+		backgroundColor:(UIColor *)backgroundColor
+	 cornerRadiusFactor:(CGFloat)cornerRadiusFactor;
+
+- (BOOL)hasNonWhiteBackground;
+
 @end

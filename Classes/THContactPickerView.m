@@ -14,6 +14,8 @@
     BOOL _shouldSelectTextView;
 	int _lineCount;
 	CGRect _frameOfLastView;
+	CGFloat _contactHorizontalPadding;
+	BOOL _showComma;
 }
 
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -30,12 +32,13 @@
 
 @implementation THContactPickerView
 
-#define kVerticalViewPadding		5   // the amount of padding on top and bottom of the view
-#define kHorizontalPadding			0   // the amount of padding to the left and right of each contact view
-#define kHorizontalSidePadding		10  // the amount of padding on the left and right of the view
-#define kVerticalPadding			2   // amount of padding above and below each contact view
-#define kTextViewMinWidth			20  // minimum width of trailing text view
-#define KMaxNumberOfLinesDefault	2
+#define kVerticalViewPadding				5   // the amount of padding on top and bottom of the view
+#define kHorizontalPadding					0   // the amount of padding to the left and right of each contact view
+#define kHorizontalPaddingWithBackground	2   // the amount of padding to the left and right of each contact view (when bubbles have a non white background)
+#define kHorizontalSidePadding				10  // the amount of padding on the left and right of the view
+#define kVerticalPadding					2   // amount of padding above and below each contact view
+#define kTextViewMinWidth					20  // minimum width of trailing text view
+#define KMaxNumberOfLinesDefault			2
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
@@ -146,6 +149,10 @@
 }
 
 - (void)addContact:(id)contact withName:(NSString *)name {
+	[self addContact:contact withName:name withStyle:self.contactViewStyle andSelectedStyle:self.contactViewSelectedStyle];
+}
+
+- (void)addContact:(id)contact withName:(NSString *)name withStyle:(THContactViewStyle *)bubbleStyle andSelectedStyle:(THContactViewStyle *)selectedStyle {
     id contactKey = [NSValue valueWithNonretainedObject:contact];
     if ([self.contactKeys containsObject:contactKey]){
         NSLog(@"Cannot add the same object twice to ContactPickerView");
@@ -158,37 +165,45 @@
     }
     
     self.textField.text = @"";
-    
-    THContactView *contactView = [[THContactView alloc] initWithName:name style:self.contactViewStyle selectedStyle:self.contactViewSelectedStyle showComma:!self.limitToOne];
-    contactView.maxWidth = self.frame.size.width - self.promptLabel.frame.origin.x - 2 * kHorizontalPadding - 2 * kHorizontalSidePadding;
-    contactView.minWidth = kTextViewMinWidth + 2 * kHorizontalPadding;
+	
+	if ([bubbleStyle hasNonWhiteBackground]){
+		_contactHorizontalPadding = kHorizontalPaddingWithBackground;
+		_showComma = NO;
+	} else {
+		_contactHorizontalPadding = kHorizontalPadding;
+		_showComma = !self.limitToOne;
+	}
+	
+    THContactView *contactView = [[THContactView alloc] initWithName:name style:bubbleStyle selectedStyle:selectedStyle showComma:_showComma];
+    contactView.maxWidth = self.frame.size.width - self.promptLabel.frame.origin.x - 2 * _contactHorizontalPadding - 2 * kHorizontalSidePadding;
+    contactView.minWidth = kTextViewMinWidth + 2 * _contactHorizontalPadding;
     contactView.keyboardAppearance = self.keyboardAppearance;
     contactView.returnKeyType = self.returnKeyType;
     contactView.delegate = self;
-	[contactView setFont:self.font];
-	
+    [contactView setFont:self.font];
+    
     [self.contacts setObject:contactView forKey:contactKey];
     [self.contactKeys addObject:contactKey];
-	
+    
     if (self.selectedContactView){
-		// if there is a selected contact, deselect it
+        // if there is a selected contact, deselect it
         [self.selectedContactView unSelect];
         self.selectedContactView = nil;
         [self selectTextView];
     }
-
-	// update the position of the contacts
-	[self layoutContactViews];
-	
+    
+    // update the position of the contacts
+    [self layoutContactViews];
+    
     // update size of the scrollView
-	[UIView animateWithDuration:0.2 animations:^{
-		[self layoutScrollView];
-	} completion:^(BOOL finished) {
-		// scroll to bottom
-		_shouldSelectTextView = [self isFirstResponder];
-		[self scrollToBottomWithAnimation:YES];
-		// after scroll animation [self selectTextView] will be called
-	}];
+    [UIView animateWithDuration:0.2 animations:^{
+        [self layoutScrollView];
+    } completion:^(BOOL finished) {
+        // scroll to bottom
+        _shouldSelectTextView = [self isFirstResponder];
+        [self scrollToBottomWithAnimation:YES];
+        // after scroll animation [self selectTextView] will be called
+    }];
 }
 
 - (void)selectTextView {
@@ -366,11 +381,11 @@
 			contactViewFrame.origin.y = kVerticalPadding + self.verticalPadding;
 		} else {
 			// Check if contact view will fit on the current line
-			CGFloat width = contactViewFrame.size.width + 2 * kHorizontalPadding;
+			CGFloat width = contactViewFrame.size.width + 2 * _contactHorizontalPadding;
 			if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - width >= 0){
 				// add to the same line
 				// Place contact view just after last contact view on the same line
-				contactViewFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + kHorizontalPadding * 2;
+				contactViewFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding * 2;
 				contactViewFrame.origin.y = _frameOfLastView.origin.y;
 			} else {
 				// No space on current line, jump to next line
@@ -389,20 +404,20 @@
 	}
 	
 	// Now add the textView after the contact views
-	CGFloat minWidth = kTextViewMinWidth + 2 * kHorizontalPadding;
+	CGFloat minWidth = kTextViewMinWidth + 2 * _contactHorizontalPadding;
 	CGFloat textViewHeight = self.lineHeight - 2 * kVerticalPadding;
 	CGRect textViewFrame = CGRectMake(0, 0, self.textField.frame.size.width, textViewHeight);
 	
 	// Check if we can add the text field on the same line as the last contact view
 	if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - minWidth >= 0){ // add to the same line
-		textViewFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + kHorizontalPadding;
+		textViewFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding;
 		textViewFrame.size.width = self.frame.size.width - textViewFrame.origin.x;
 	} else {
 		// place text view on the next line
 		_lineCount++;
 		
 		textViewFrame.origin.x = kHorizontalSidePadding;
-		textViewFrame.size.width = self.frame.size.width - 2 * kHorizontalPadding;
+		textViewFrame.size.width = self.frame.size.width - 2 * _contactHorizontalPadding;
 		
 		if (self.contacts.count == 0){
 			_lineCount = 0;

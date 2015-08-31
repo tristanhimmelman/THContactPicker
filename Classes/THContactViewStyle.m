@@ -11,6 +11,13 @@
 @implementation THContactViewStyle
 
 - (id)initWithTextColor:(UIColor *)textColor
+		backgroundColor:(UIColor *)backgroundColor
+	 cornerRadiusFactor:(CGFloat)cornerRadiusFactor {
+
+	return [self initWithTextColor:textColor gradientTop:backgroundColor gradientBottom:backgroundColor borderColor:backgroundColor borderWidth:0 cornerRadiusFactor:cornerRadiusFactor];
+}
+
+- (id)initWithTextColor:(UIColor *)textColor
             gradientTop:(UIColor *)gradientTop
          gradientBottom:(UIColor *)gradientBottom
             borderColor:(UIColor *)borderColor
@@ -25,7 +32,15 @@
         self.borderWidth = borderWidth;
         self.cornerRadiusFactor = cornerRadiusFactor;
     }
+	
     return self;
+}
+
+- (BOOL)hasNonWhiteBackground {
+	if (self.gradientTop == nil || self.gradientTop == [UIColor whiteColor] || self.gradientTop == [UIColor clearColor]){
+		return NO;
+	}
+	return YES;
 }
 
 @end

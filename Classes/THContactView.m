@@ -9,13 +9,16 @@
 #import "THContactView.h"
 #import "THContactTextField.h"
 
-@interface THContactView ()<THContactTextFieldDelegate>
+@interface THContactView ()<THContactTextFieldDelegate>{
+	CGFloat _horizontalPadding;
+}
 
 @end
 
 @implementation THContactView
 
 #define kHorizontalPadding 3
+#define kHorizontalPaddingWithBackground 8
 #define kVerticalPadding 2
 
 #define kDefaultBorderWidth 1
@@ -79,6 +82,13 @@
         
         self.style = style;
         self.selectedStyle = selectedStyle;
+		
+		if ([style hasNonWhiteBackground]){
+			_horizontalPadding = kHorizontalPaddingWithBackground;
+		} else {
+			_horizontalPadding = kHorizontalPadding;
+		}
+		
         [self setupView];
     }
     return self;
@@ -107,7 +117,7 @@
     tapGesture.numberOfTouchesRequired = 1;
     [self addGestureRecognizer:tapGesture];
     
-    self.maxWidth = 2 * kHorizontalPadding;
+    self.maxWidth = 2 * _horizontalPadding;
     self.minWidth = 2 * kVerticalPadding;
     
     [self adjustSize];
@@ -119,11 +129,11 @@
     // Adjust the label frames
     [self.label sizeToFit];
     CGRect frame = self.label.frame;
-    frame.origin.x = kHorizontalPadding;
+    frame.origin.x = _horizontalPadding;
     frame.origin.y = kVerticalPadding;
     
-    CGFloat maxWidth = self.maxWidth - 2 * kHorizontalPadding;
-    CGFloat minWidth = self.minWidth - 2 * kHorizontalPadding;
+    CGFloat maxWidth = self.maxWidth - 2 * _horizontalPadding;
+    CGFloat minWidth = self.minWidth - 2 * _horizontalPadding;
     
     if (minWidth < maxWidth) {
         if (frame.size.width < minWidth) {
@@ -139,7 +149,7 @@
 
     
     // Adjust view frame
-    self.bounds = CGRectMake(0, 0, frame.size.width + 2 * kHorizontalPadding, frame.size.height + 2 * kVerticalPadding);
+    self.bounds = CGRectMake(0, 0, frame.size.width + 2 * _horizontalPadding, frame.size.height + 2 * kVerticalPadding);
     
     // Create gradient layer
     if (self.gradientLayer == nil){
@@ -215,8 +225,6 @@
 }
 
 #pragma mark - UITextViewDelegate
-
-
 
 - (void)textFieldDidHitBackspaceWithEmptyText:(THContactTextField *)textView {
     self.textField.hidden = NO;

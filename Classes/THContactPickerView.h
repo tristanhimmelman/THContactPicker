@@ -31,6 +31,7 @@
 @property (nonatomic, strong) UIFont *font;
 
 - (void)addContact:(id)contact withName:(NSString *)name;
+- (void)addContact:(id)contact withName:(NSString *)name withStyle:(THContactViewStyle*)bubbleStyle andSelectedStyle:(THContactViewStyle*) selectedStyle;
 - (void)removeContact:(id)contact;
 - (void)removeAllContacts;
 - (BOOL)resignFirstResponder;
