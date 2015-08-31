@@ -57,7 +57,14 @@ Set the style of the contacts item for default and selected states:
 ```objective-c
 - (void)setContactViewStyle:(THContactViewStyle *)color selectedStyle:(THContactViewStyle *)selectedColor;
 ```
-THContactViewStyle defines the look of each contact item. The following attributes can be modified: text label color, top gradient color, bottom gradient color, border color, border width and corner radius factor. Sample contact view style with iOS 6 look:
-
+THContactViewStyle defines the look of each contact item. The following attributes can be modified: text label color, top gradient color, bottom gradient color, border color, border width and corner radius factor. For example:
 ![Screenshot](https://raw.githubusercontent.com/tristanhimmelman/THContactPicker/master/bubbleStyle.png)
+
+You can also set a different style for each contact view:
+```objective-c
+- (void)addContact:(id)contact withName:(NSString *)name withStyle:(THContactViewStyle *)bubbleStyle andSelectedStyle:(THContactViewStyle *)selectedStyle;
+```
+![Screenshot](https://raw.githubusercontent.com/tristanhimmelman/THContactPicker/master/screenshot2.png)
+
+
 
