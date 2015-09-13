@@ -143,6 +143,10 @@
     self.promptLabel.textColor = color;
 }
 
+- (void)setPromptTintColor:(UIColor *)color{
+    self.textField.tintColor = color;
+}
+
 - (void)setBackgroundColor:(UIColor *)backgroundColor{
     self.scrollView.backgroundColor = backgroundColor;
     [super setBackgroundColor:backgroundColor];

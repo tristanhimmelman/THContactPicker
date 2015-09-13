@@ -43,6 +43,7 @@
 - (void)setPromptLabelText:(NSString *)text;
 - (void)setPromptLabelAttributedText:(NSAttributedString *)attributedText;
 - (void)setPromptLabelTextColor:(UIColor *)color;
+- (void)setPromptTintColor:(UIColor *)color;
 - (void)setFont:(UIFont *)font;
 
 @end
