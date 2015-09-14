@@ -311,8 +311,8 @@
         return;
     }
     
-    if ([self.delegate respondsToSelector:@selector(contactPickerDidRemoveContact:)]){
-        [self.delegate contactPickerDidRemoveContact:[contact nonretainedObjectValue]];
+    if ([self.delegate respondsToSelector:@selector(contactPicker:didRemoveContact:)]){
+        [self.delegate contactPicker:self didRemoveContact:[contact nonretainedObjectValue]];
     }
     
     [self removeContactByKey:contact];
@@ -497,18 +497,18 @@
         self.selectedContactView = [self.contacts objectForKey:[self.contactKeys lastObject]];
         [self.selectedContactView select];
     } else {
-        if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]){
-            [self.delegate contactPickerTextViewDidChange:textView.text];
+        if ([self.delegate respondsToSelector:@selector(contactPicker:textViewDidChangeToText:)]){
+            [self.delegate contactPicker:self textViewDidChangeToText:textView.text];
         }
     }
 }
 
 - (void)textFieldDidChange:(THContactTextField *)textView{
-    if ([self.delegate respondsToSelector:@selector(contactPickerTextViewDidChange:)]
-     && !self.textField.markedTextRange) {
-        [self.delegate contactPickerTextViewDidChange:textView.text];
+    if ([self.delegate respondsToSelector:@selector(contactPicker:textViewDidChangeToText:)]
+        && !self.textField.markedTextRange) {
+        [self.delegate contactPicker:self textViewDidChangeToText:textView.text];
     }
-    
+
     if ([textView.text isEqualToString:@""] && self.contacts.count == 0){
         self.placeholderLabel.hidden = NO;
     } else {
@@ -523,8 +523,8 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-	if ([self.delegate respondsToSelector:@selector(contactPickerTextFieldShouldReturn:)]){
-		return [self.delegate contactPickerTextFieldShouldReturn:textField];
+	if ([self.delegate respondsToSelector:@selector(contactPicker:textFieldShouldReturn:)]){
+		return [self.delegate contactPicker:self textFieldShouldReturn:textField];
 	}
 	return YES;
 }
