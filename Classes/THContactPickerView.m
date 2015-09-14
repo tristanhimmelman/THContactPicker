@@ -529,6 +529,18 @@
 	return YES;
 }
 
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+   	if ([self.delegate respondsToSelector:@selector(contactPicker:textFieldDidBeginEditing:)]){
+        [self.delegate contactPicker:self textFieldDidBeginEditing:textField];
+    }
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+   	if ([self.delegate respondsToSelector:@selector(contactPicker:textFieldDidEndEditing:)]){
+        [self.delegate contactPicker:self textFieldDidEndEditing:textField];
+    }
+}
+
 #pragma mark - THContactViewDelegate Functions
 
 - (void)contactViewWasSelected:(THContactView *)contactView {
