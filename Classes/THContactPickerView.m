@@ -1,6 +1,6 @@
 //
-//  ContactPickerTextView.m
-//  ContactPicker
+//  THContactPickerView.m
+//  THContactPickerView
 //
 //  Created by Tristan Himmelman on 11/2/12, revised by mysteriouss.
 //  Copyright (c) 2012 Tristan Himmelman. All rights reserved.
@@ -11,7 +11,7 @@
 #import "THContactTextField.h"
 
 @interface THContactPickerView ()<THContactTextFieldDelegate>{
-    BOOL _shouldSelectTextView;
+    BOOL _shouldSelectTextField;
 	int _lineCount;
 	CGRect _frameOfLastView;
 	CGFloat _contactHorizontalPadding;
@@ -37,7 +37,7 @@
 #define kHorizontalPaddingWithBackground	2   // the amount of padding to the left and right of each contact view (when bubbles have a non white background)
 #define kHorizontalSidePadding				10  // the amount of padding on the left and right of the view
 #define kVerticalPadding					2   // amount of padding above and below each contact view
-#define kTextViewMinWidth					20  // minimum width of trailing text view
+#define kTextFieldMinWidth					20  // minimum width of trailing text view
 #define KMaxNumberOfLinesDefault			2
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -83,7 +83,7 @@
     [self.promptLabel sizeToFit];
     [self.scrollView addSubview:self.promptLabel];
     
-    // Create TextView
+    // Create TextField
     self.textField = [[THContactTextField alloc] init];
     self.textField.delegate = self;
     self.textField.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -180,7 +180,7 @@
 	
     THContactView *contactView = [[THContactView alloc] initWithName:name style:bubbleStyle selectedStyle:selectedStyle showComma:_showComma];
     contactView.maxWidth = self.frame.size.width - self.promptLabel.frame.origin.x - 2 * _contactHorizontalPadding - 2 * kHorizontalSidePadding;
-    contactView.minWidth = kTextViewMinWidth + 2 * _contactHorizontalPadding;
+    contactView.minWidth = kTextFieldMinWidth + 2 * _contactHorizontalPadding;
     contactView.keyboardAppearance = self.keyboardAppearance;
     contactView.returnKeyType = self.returnKeyType;
     contactView.delegate = self;
@@ -193,7 +193,7 @@
         // if there is a selected contact, deselect it
         [self.selectedContactView unSelect];
         self.selectedContactView = nil;
-        [self selectTextView];
+        [self selectTextField];
     }
     
     // update the position of the contacts
@@ -204,13 +204,13 @@
         [self layoutScrollView];
     } completion:^(BOOL finished) {
         // scroll to bottom
-        _shouldSelectTextView = [self isFirstResponder];
+        _shouldSelectTextField = [self isFirstResponder];
         [self scrollToBottomWithAnimation:YES];
-        // after scroll animation [self selectTextView] will be called
+        // after scroll animation [self selectTextField] will be called
     }];
 }
 
-- (void)selectTextView {
+- (void)selectTextField {
     self.textField.hidden = NO;
     [self.textField becomeFirstResponder];
 }
@@ -316,7 +316,7 @@
     }
     
     [self removeContactByKey:contact];
-    [self selectTextView];
+    [self selectTextField];
 
     if (self.selectedContactView == contactView) {
         self.selectedContactView = nil;
@@ -407,34 +407,34 @@
 		}
 	}
 	
-	// Now add the textView after the contact views
-	CGFloat minWidth = kTextViewMinWidth + 2 * _contactHorizontalPadding;
-	CGFloat textViewHeight = self.lineHeight - 2 * kVerticalPadding;
-	CGRect textViewFrame = CGRectMake(0, 0, self.textField.frame.size.width, textViewHeight);
+	// Now add the textField after the contact views
+	CGFloat minWidth = kTextFieldMinWidth + 2 * _contactHorizontalPadding;
+	CGFloat textFieldHeight = self.lineHeight - 2 * kVerticalPadding;
+	CGRect textFieldFrame = CGRectMake(0, 0, self.textField.frame.size.width, textFieldHeight);
 	
 	// Check if we can add the text field on the same line as the last contact view
 	if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - minWidth >= 0){ // add to the same line
-		textViewFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding;
-		textViewFrame.size.width = self.frame.size.width - textViewFrame.origin.x;
+		textFieldFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding;
+		textFieldFrame.size.width = self.frame.size.width - textFieldFrame.origin.x;
 	} else {
 		// place text view on the next line
 		_lineCount++;
 		
-		textViewFrame.origin.x = kHorizontalSidePadding;
-		textViewFrame.size.width = self.frame.size.width - 2 * _contactHorizontalPadding;
+		textFieldFrame.origin.x = kHorizontalSidePadding;
+		textFieldFrame.size.width = self.frame.size.width - 2 * _contactHorizontalPadding;
 		
 		if (self.contacts.count == 0){
 			_lineCount = 0;
-			textViewFrame.origin.x = [self firstLineXOffset];
-			textViewFrame.size.width = self.bounds.size.width - textViewFrame.origin.x;
+			textFieldFrame.origin.x = [self firstLineXOffset];
+			textFieldFrame.size.width = self.bounds.size.width - textFieldFrame.origin.x;
 		}
 	}
 	
-	textViewFrame.origin.y = _lineCount * self.lineHeight + kVerticalPadding + self.verticalPadding;
-	self.textField.frame = textViewFrame;
+	textFieldFrame.origin.y = _lineCount * self.lineHeight + kVerticalPadding + self.verticalPadding;
+	self.textField.frame = textFieldFrame;
 	
 	// Add text view if it hasn't been added
-	self.textField.center = CGPointMake(self.textField.center.x, _lineCount * self.lineHeight + textViewHeight / 2 + kVerticalPadding + self.verticalPadding);
+	self.textField.center = CGPointMake(self.textField.center.x, _lineCount * self.lineHeight + textFieldHeight / 2 + kVerticalPadding + self.verticalPadding);
 	
 	if (self.textField.superview == nil){
 		[self.scrollView addSubview:self.textField];
@@ -489,7 +489,7 @@
 
 #pragma mark - THContactTextFieldDelegate
 
-- (void)textFieldDidHitBackspaceWithEmptyText:(THContactTextField *)textView {
+- (void)textFieldDidHitBackspaceWithEmptyText:(THContactTextField *)textField {
     self.textField.hidden = NO;
     
     if (self.contacts.count) {
@@ -497,19 +497,19 @@
         self.selectedContactView = [self.contacts objectForKey:[self.contactKeys lastObject]];
         [self.selectedContactView select];
     } else {
-        if ([self.delegate respondsToSelector:@selector(contactPicker:textViewDidChangeToText:)]){
-            [self.delegate contactPicker:self textViewDidChangeToText:textView.text];
+        if ([self.delegate respondsToSelector:@selector(contactPicker:textFieldDidChange:)]){
+            [self.delegate contactPicker:self textFieldDidChange:textField];
         }
     }
 }
 
-- (void)textFieldDidChange:(THContactTextField *)textView{
-    if ([self.delegate respondsToSelector:@selector(contactPicker:textViewDidChangeToText:)]
+- (void)textFieldDidChange:(THContactTextField *)textField {
+    if ([self.delegate respondsToSelector:@selector(contactPicker:textFieldDidChange:)]
         && !self.textField.markedTextRange) {
-        [self.delegate contactPicker:self textViewDidChangeToText:textView.text];
+        [self.delegate contactPicker:self textFieldDidChange:textField];
     }
 
-    if ([textView.text isEqualToString:@""] && self.contacts.count == 0){
+    if ([textField.text isEqualToString:@""] && self.contacts.count == 0){
         self.placeholderLabel.hidden = NO;
     } else {
         self.placeholderLabel.hidden = YES;
@@ -549,6 +549,11 @@
     }
     self.selectedContactView = contactView;
     
+    id contact = [self contactForContactView:contactView];
+    if ([self.delegate respondsToSelector:@selector(contactPicker:didSelectContact:)]){
+        [self.delegate contactPicker:self didSelectContact:[contact nonretainedObjectValue]];
+    }
+    
     [self.textField resignFirstResponder];
     self.textField.text = @"";
     self.textField.hidden = YES;
@@ -559,7 +564,7 @@
         self.selectedContactView = nil;
     }
 
-    [self selectTextView];
+    [self selectTextField];
 	// transfer the text fromt he textField within the ContactView if there was any
 	// ***This is important if the user starts to type when a contact view is selected
     self.textField.text = contactView.textField.text;
@@ -583,7 +588,7 @@
     [self scrollToBottomWithAnimation:YES];
     
     // Show textField
-    [self selectTextView];
+    [self selectTextField];
     
     // Unselect contact view
     [self.selectedContactView unSelect];
@@ -593,9 +598,9 @@
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
-    if (_shouldSelectTextView){
-        _shouldSelectTextView = NO;
-        [self selectTextView];
+    if (_shouldSelectTextField){
+        _shouldSelectTextField = NO;
+        [self selectTextField];
     }
 }
 

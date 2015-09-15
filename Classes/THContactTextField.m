@@ -53,7 +53,7 @@
 }
 
 - (void)textFieldTextDidChange:(NSNotification *)notification {
-    if (notification.object == self) { //Since THContactView.textView is a THContactTextField
+    if (notification.object == self) { //Since THContactView.textField is a THContactTextField
         if (self.delegate && [self.delegate respondsToSelector:@selector(textFieldDidChange:)]){
             [self.delegate textFieldDidChange:self];
         }

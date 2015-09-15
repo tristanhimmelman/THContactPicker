@@ -15,11 +15,12 @@
 
 @optional
 - (void)contactPickerDidResize:(THContactPickerView *)contactPicker;
+- (void)contactPicker:(THContactPickerView *)contactPicker didSelectContact:(id)contact;
 - (void)contactPicker:(THContactPickerView *)contactPicker didRemoveContact:(id)contact;
 - (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidBeginEditing:(UITextField *)textField;
 - (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidEndEditing:(UITextField *)textField;
 - (BOOL)contactPicker:(THContactPickerView *)contactPicker textFieldShouldReturn:(UITextField *)textField;
-- (void)contactPicker:(THContactPickerView *)contactPicker textViewDidChangeToText:(NSString *)text;
+- (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidChange:(UITextField *)textField;
 
 @end
 
