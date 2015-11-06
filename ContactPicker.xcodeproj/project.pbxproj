@@ -20,11 +20,11 @@
 		6A7586DA1A354F150014433A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A7586D91A354F150014433A /* Assets.xcassets */; };
 		6AE31FCC1644DB2C00505230 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AE31FCB1644DB2C00505230 /* QuartzCore.framework */; };
 		6B3B2DED183260AC00798513 /* THContactPickerViewControllerDemo.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DEC183260AC00798513 /* THContactPickerViewControllerDemo.m */; };
-		6B3B2DEF1832679900798513 /* THContactPickerViewControllerDemo.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6B3B2DEE1832679900798513 /* THContactPickerViewControllerDemo.xib */; };
 		6B3B2DF9183267B900798513 /* THContactViewStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DF2183267B900798513 /* THContactViewStyle.m */; };
 		6B3B2DFA183267B900798513 /* THContactView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DF4183267B900798513 /* THContactView.m */; };
 		6B3B2DFB183267B900798513 /* THContactPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3B2DF6183267B900798513 /* THContactPickerView.m */; };
 		7D951FC119222B6800EFAAB4 /* THContactTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D951FC019222B6800EFAAB4 /* THContactTextField.m */; };
+		B62E55D81BED206A00A5C842 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B62E55D71BED206A00A5C842 /* Storyboard.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,7 +46,6 @@
 		6AE31FCB1644DB2C00505230 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		6B3B2DEB183260AC00798513 /* THContactPickerViewControllerDemo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactPickerViewControllerDemo.h; sourceTree = "<group>"; };
 		6B3B2DEC183260AC00798513 /* THContactPickerViewControllerDemo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactPickerViewControllerDemo.m; sourceTree = "<group>"; };
-		6B3B2DEE1832679900798513 /* THContactPickerViewControllerDemo.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = THContactPickerViewControllerDemo.xib; sourceTree = "<group>"; };
 		6B3B2DF1183267B900798513 /* THContactViewStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactViewStyle.h; sourceTree = "<group>"; };
 		6B3B2DF2183267B900798513 /* THContactViewStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactViewStyle.m; sourceTree = "<group>"; };
 		6B3B2DF3183267B900798513 /* THContactView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactView.h; sourceTree = "<group>"; };
@@ -55,6 +54,7 @@
 		6B3B2DF6183267B900798513 /* THContactPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactPickerView.m; sourceTree = "<group>"; };
 		7D951FBF19222B6800EFAAB4 /* THContactTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THContactTextField.h; sourceTree = "<group>"; };
 		7D951FC019222B6800EFAAB4 /* THContactTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THContactTextField.m; sourceTree = "<group>"; };
+		B62E55D71BED206A00A5C842 /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,12 +106,12 @@
 				6B3B2DF0183267B900798513 /* Classes */,
 				29A71BF616448250005286F1 /* AppDelegate.h */,
 				29A71BF716448250005286F1 /* AppDelegate.m */,
-				29A71BEE1644824F005286F1 /* Supporting Files */,
 				6B3B2DEB183260AC00798513 /* THContactPickerViewControllerDemo.h */,
 				6B3B2DEC183260AC00798513 /* THContactPickerViewControllerDemo.m */,
-				6B3B2DEE1832679900798513 /* THContactPickerViewControllerDemo.xib */,
+				B62E55D71BED206A00A5C842 /* Storyboard.storyboard */,
 				6A7586D71A3523380014433A /* Launch Screen.xib */,
 				6A7586D91A354F150014433A /* Assets.xcassets */,
+				29A71BEE1644824F005286F1 /* Supporting Files */,
 			);
 			path = ContactPicker;
 			sourceTree = "<group>";
@@ -171,7 +171,7 @@
 		29A71BDA1644824F005286F1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Tristan Himmelman";
 			};
 			buildConfigurationList = 29A71BDD1644824F005286F1 /* Build configuration list for PBXProject "ContactPicker" */;
@@ -199,8 +199,8 @@
 				29A71BF216448250005286F1 /* InfoPlist.strings in Resources */,
 				29A71BFA16448250005286F1 /* Default.png in Resources */,
 				29A71BFC16448250005286F1 /* Default@2x.png in Resources */,
-				6B3B2DEF1832679900798513 /* THContactPickerViewControllerDemo.xib in Resources */,
 				6A7586DA1A354F150014433A /* Assets.xcassets in Resources */,
+				B62E55D81BED206A00A5C842 /* Storyboard.storyboard in Resources */,
 				29A71BFE16448250005286F1 /* Default-568h@2x.png in Resources */,
 				6A7586D81A3523380014433A /* Launch Screen.xib in Resources */,
 			);
@@ -248,6 +248,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -298,6 +299,7 @@
 				GCC_PREFIX_HEADER = "ContactPicker/ContactPicker-Prefix.pch";
 				INFOPLIST_FILE = "ContactPicker/ContactPicker-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "ContactPicker.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
@@ -313,6 +315,7 @@
 				GCC_PREFIX_HEADER = "ContactPicker/ContactPicker-Prefix.pch";
 				INFOPLIST_FILE = "ContactPicker/ContactPicker-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				PRODUCT_BUNDLE_IDENTIFIER = "ContactPicker.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;

@@ -11,7 +11,7 @@
 @interface THContactPickerViewControllerDemo : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) THContactPickerView *contactPickerView;
-@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) NSArray *contacts;
 @property (nonatomic, readonly) NSArray *selectedContacts;
 @property (nonatomic) NSInteger selectedCount;

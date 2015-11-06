@@ -7,24 +7,11 @@
 //
 
 #import "AppDelegate.h"
-#import "THContactPickerViewControllerDemo.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
-    
-    
-    THContactPickerViewControllerDemo *contactPicker = [[THContactPickerViewControllerDemo alloc] initWithNibName:@"THContactPickerViewControllerDemo" bundle:nil];
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:contactPicker];
-    
-    self.window.rootViewController = navigationController;
-    
-    [self.window makeKeyAndVisible];
-    
     return YES;
 }
 
