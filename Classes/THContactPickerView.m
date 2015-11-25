@@ -243,8 +243,8 @@
 	[self removeContactByKey:contactKey];
 }
 
-- (void)removeContactWithKey:(id)contactId {
-    [self removeContactByKey:contactId];
+- (void)removeContactWithKey:(id)contactKey {
+    [self removeContactByKey:contactKey];
 }
 
 - (void)setPlaceholderLabelText:(NSString *)text {

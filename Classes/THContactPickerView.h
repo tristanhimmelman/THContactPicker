@@ -35,7 +35,7 @@
 - (void)addContact:(id)contact withName:(NSString *)name withStyle:(THContactViewStyle*)bubbleStyle andSelectedStyle:(THContactViewStyle*) selectedStyle;
 - (void)addContact:(id)contact withKey:(id)contactKey withName:(NSString *)name withStyle:(THContactViewStyle *)bubbleStyle andSelectedStyle:(THContactViewStyle *)selectedStyle;
 - (void)removeContact:(id)contact;
-- (void)removeContactWithKey:(id)contactId;
+- (void)removeContactWithKey:(id)contactKey;
 - (void)removeAllContacts;
 - (BOOL)resignFirstResponder;
 
