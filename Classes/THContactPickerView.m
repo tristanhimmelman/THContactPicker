@@ -156,8 +156,16 @@
 	[self addContact:contact withName:name withStyle:self.contactViewStyle andSelectedStyle:self.contactViewSelectedStyle];
 }
 
+- (void)addContact:(id)contact withKey:(id)contactKey withName:(NSString *) name {
+    [self addContact:contact withKey:contactKey withName:name withStyle:self.contactViewStyle andSelectedStyle:self.contactViewSelectedStyle];
+}
+
 - (void)addContact:(id)contact withName:(NSString *)name withStyle:(THContactViewStyle *)bubbleStyle andSelectedStyle:(THContactViewStyle *)selectedStyle {
     id contactKey = [NSValue valueWithNonretainedObject:contact];
+    [self addContact:contact withKey:contactKey withName:name withStyle:bubbleStyle andSelectedStyle:selectedStyle];
+}
+
+- (void)addContact:(id)contact withKey:(id) contactKey withName:(NSString *)name withStyle:(THContactViewStyle *)bubbleStyle andSelectedStyle:(THContactViewStyle *)selectedStyle {
     if ([self.contactKeys containsObject:contactKey]){
         NSLog(@"Cannot add the same object twice to ContactPickerView");
         return;
@@ -169,15 +177,15 @@
     }
     
     self.textField.text = @"";
-	
-	if ([bubbleStyle hasNonWhiteBackground]){
-		_contactHorizontalPadding = kHorizontalPaddingWithBackground;
-		_showComma = NO;
-	} else {
-		_contactHorizontalPadding = kHorizontalPadding;
-		_showComma = !self.limitToOne;
-	}
-	
+    
+    if ([bubbleStyle hasNonWhiteBackground]){
+        _contactHorizontalPadding = kHorizontalPaddingWithBackground;
+        _showComma = NO;
+    } else {
+        _contactHorizontalPadding = kHorizontalPadding;
+        _showComma = !self.limitToOne;
+    }
+    
     THContactView *contactView = [[THContactView alloc] initWithName:name style:bubbleStyle selectedStyle:selectedStyle showComma:_showComma];
     contactView.maxWidth = self.frame.size.width - self.promptLabel.frame.origin.x - 2 * _contactHorizontalPadding - 2 * kHorizontalSidePadding;
     contactView.minWidth = kTextViewMinWidth + 2 * _contactHorizontalPadding;
@@ -233,6 +241,10 @@
 - (void)removeContact:(id)contact {
     id contactKey = [NSValue valueWithNonretainedObject:contact];
 	[self removeContactByKey:contactKey];
+}
+
+- (void)removeContactWithKey:(id)contactKey {
+    [self removeContactByKey:contactKey];
 }
 
 - (void)setPlaceholderLabelText:(NSString *)text {
@@ -312,7 +324,7 @@
     }
     
     if ([self.delegate respondsToSelector:@selector(contactPickerDidRemoveContact:)]){
-        [self.delegate contactPickerDidRemoveContact:[contact nonretainedObjectValue]];
+        [self.delegate contactPickerDidRemoveContact:[contact copy]];
     }
     
     [self removeContactByKey:contact];
