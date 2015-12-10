@@ -324,7 +324,7 @@
     }
     
     if ([self.delegate respondsToSelector:@selector(contactPickerDidRemoveContact:)]){
-        [self.delegate contactPickerDidRemoveContact:[contact nonretainedObjectValue]];
+        [self.delegate contactPickerDidRemoveContact:[contact copy]];
     }
     
     [self removeContactByKey:contact];
