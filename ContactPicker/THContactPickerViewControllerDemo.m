@@ -222,11 +222,11 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
 
 #pragma mark - THContactPickerTextViewDelegate
 
-- (void)contactPickerTextViewDidChange:(NSString *)textViewText {
-    if ([textViewText isEqualToString:@""]){
+- (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidChange:(UITextField *)textField {
+    if ([textField.text isEqualToString:@""]){
         self.filteredContacts = self.contacts;
     } else {
-        NSPredicate *predicate = [self newFilteringPredicateWithText:textViewText];
+        NSPredicate *predicate = [self newFilteringPredicateWithText:textField.text];
         self.filteredContacts = [self.contacts filteredArrayUsingPredicate:predicate];
     }
     [self.tableView reloadData];
@@ -238,7 +238,7 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     self.tableView.frame = frame;
 }
 
-- (void)contactPickerDidRemoveContact:(id)contact {
+- (void)contactPicker:(THContactPickerView *)contactPicker didRemoveContact:(id)contact {
     [self.privateSelectedContacts removeObject:contact];
     
     NSInteger index = [self.contacts indexOfObject:contact];
@@ -247,13 +247,13 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     [self didChangeSelectedItems];
 }
 
-- (BOOL)contactPickerTextFieldShouldReturn:(UITextField *)textField {
-	if (textField.text.length > 0){
-		NSString *contact = [[NSString alloc] initWithString:textField.text];
-		[self.privateSelectedContacts addObject:contact];
-		[self.contactPickerView addContact:contact withName:textField.text];
-	}
-	return YES;
+- (BOOL)contactPicker:(THContactPickerView *)contactPicker textFieldShouldReturn:(UITextField *)textField {
+    if (textField.text.length > 0){
+        NSString *contact = [[NSString alloc] initWithString:textField.text];
+        [self.privateSelectedContacts addObject:contact];
+        [self.contactPickerView addContact:contact withName:textField.text];
+    }
+    return YES;
 }
 
 #pragma  mark - NSNotificationCenter
