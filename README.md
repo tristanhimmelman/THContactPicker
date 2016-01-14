@@ -10,7 +10,7 @@ THContactPicker is an iOS view used for selecting contacts. It is built to mimic
 ##Installation
 THContactPicker can be added to your project manually or using Cocoapods:
 ```
-pod 'THContactPicker', '~> 1.2'
+pod 'THContactPicker', '~> 2.0'
 ```
 
 ##Usage
