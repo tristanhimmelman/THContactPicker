@@ -46,7 +46,9 @@
     BOOL isTextFieldEmpty = (self.text.length == 0);
     if (isTextFieldEmpty){
         if (self.delegate && [self.delegate respondsToSelector:@selector(textFieldDidHitBackspaceWithEmptyText:)]){
-            [self.delegate textFieldDidHitBackspaceWithEmptyText:self];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.delegate textFieldDidHitBackspaceWithEmptyText:self];
+            });
         }
     }
     [super deleteBackward];
