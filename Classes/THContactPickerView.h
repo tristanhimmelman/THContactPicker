@@ -13,10 +13,14 @@
 
 @protocol THContactPickerDelegate <NSObject>
 
-- (void)contactPickerTextViewDidChange:(NSString *)textViewText;
-- (void)contactPickerDidRemoveContact:(id)contact;
-- (void)contactPickerDidResize:(THContactPickerView *)contactPickerView;
-- (BOOL)contactPickerTextFieldShouldReturn:(UITextField *)textField;
+@optional
+- (void)contactPickerDidResize:(THContactPickerView *)contactPicker;
+- (void)contactPicker:(THContactPickerView *)contactPicker didSelectContact:(id)contact;
+- (void)contactPicker:(THContactPickerView *)contactPicker didRemoveContact:(id)contact;
+- (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidBeginEditing:(UITextField *)textField;
+- (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidEndEditing:(UITextField *)textField;
+- (BOOL)contactPicker:(THContactPickerView *)contactPicker textFieldShouldReturn:(UITextField *)textField;
+- (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidChange:(UITextField *)textField;
 
 @end
 

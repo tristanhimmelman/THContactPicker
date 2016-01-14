@@ -21,7 +21,7 @@
 
 @end
 
-@interface THContactView : UIView <UITextViewDelegate, UITextInputTraits>
+@interface THContactView : UIView <UITextInputTraits>
 
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) UILabel *label;

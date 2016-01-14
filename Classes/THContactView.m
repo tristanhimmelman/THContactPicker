@@ -224,9 +224,9 @@
     }
 }
 
-#pragma mark - UITextViewDelegate
+#pragma mark - UITextFieldDelegate
 
-- (void)textFieldDidHitBackspaceWithEmptyText:(THContactTextField *)textView {
+- (void)textFieldDidHitBackspaceWithEmptyText:(THContactTextField *)textField {
     self.textField.hidden = NO;
     
     // Capture "delete" key press when cell is empty
@@ -235,7 +235,7 @@
     }
 }
 
-- (void)textFieldDidChange:(THContactTextField *)textField{
+- (void)textFieldDidChange:(THContactTextField *)textField {
 	
     [self unSelect];
     if ([self.delegate respondsToSelector:@selector(contactViewWasUnSelected:)]){

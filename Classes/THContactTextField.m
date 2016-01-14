@@ -46,14 +46,16 @@
     BOOL isTextFieldEmpty = (self.text.length == 0);
     if (isTextFieldEmpty){
         if (self.delegate && [self.delegate respondsToSelector:@selector(textFieldDidHitBackspaceWithEmptyText:)]){
-            [self.delegate textFieldDidHitBackspaceWithEmptyText:self];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.delegate textFieldDidHitBackspaceWithEmptyText:self];
+            });
         }
     }
     [super deleteBackward];
 }
 
 - (void)textFieldTextDidChange:(NSNotification *)notification {
-    if (notification.object == self) { //Since THContactView.textView is a THContactTextField
+    if (notification.object == self) { //Since THContactView.textField is a THContactTextField
         if (self.delegate && [self.delegate respondsToSelector:@selector(textFieldDidChange:)]){
             [self.delegate textFieldDidChange:self];
         }
