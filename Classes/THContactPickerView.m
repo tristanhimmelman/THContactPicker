@@ -24,7 +24,6 @@
 @property (nonatomic, strong) UILabel *placeholderLabel;
 @property (nonatomic, strong) UILabel *promptLabel;
 @property (nonatomic, assign) CGFloat lineHeight;
-@property (nonatomic, strong) THContactTextField *textField;
 @property (nonatomic, strong) THContactViewStyle *contactViewStyle;
 @property (nonatomic, strong) THContactViewStyle *contactViewSelectedStyle;
 
