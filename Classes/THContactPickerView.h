@@ -34,6 +34,8 @@
 @property (nonatomic, assign) NSInteger maxNumberOfLines;	// maximum number of lines the view will display before scrolling
 @property (nonatomic, strong) UIFont *font;
 
+@property (nonatomic, assign) BOOL scrollHorizontal;	    // scroll to horizontal
+
 - (void)addContact:(id)contact withName:(NSString *)name;
 - (void)addContact:(id)contact withName:(NSString *)name withStyle:(THContactViewStyle*)bubbleStyle andSelectedStyle:(THContactViewStyle*) selectedStyle;
 - (void)removeContact:(id)contact;

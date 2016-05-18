@@ -293,13 +293,23 @@
 - (void)scrollToBottomWithAnimation:(BOOL)animated {
     if (animated){
         CGSize size = self.scrollView.contentSize;
-        CGRect frame = CGRectMake(0, size.height - self.scrollView.frame.size.height, size.width, self.scrollView.frame.size.height);
-        
+        CGRect frame;
+        if (self.scrollHorizontal) {
+            frame = CGRectMake(size.width - self.scrollView.frame.size.width, 0, self.scrollView.frame.size.width, self.scrollView.frame.size.height);
+        }
+        else{
+            frame = CGRectMake(0, size.height - self.scrollView.frame.size.height, size.width, self.scrollView.frame.size.height);
+        }
         [self.scrollView scrollRectToVisible:frame animated:animated];
     } else {
         // this block is here because scrollRectToVisible with animated NO causes crashes on iOS 5 when the user tries to delete many contacts really quickly
         CGPoint offset = self.scrollView.contentOffset;
-        offset.y = self.scrollView.contentSize.height - self.scrollView.frame.size.height;
+        if (self.scrollHorizontal) {
+            offset.x = self.scrollView.contentSize.width - self.scrollView.frame.size.width;
+        }
+        else{
+            offset.y = self.scrollView.contentSize.height - self.scrollView.frame.size.height;
+        }
         self.scrollView.contentOffset = offset;
     }
 }
@@ -386,7 +396,7 @@
 		} else {
 			// Check if contact view will fit on the current line
 			CGFloat width = contactViewFrame.size.width + 2 * _contactHorizontalPadding;
-			if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - width >= 0){
+			if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - width >= 0 || self.scrollHorizontal){
 				// add to the same line
 				// Place contact view just after last contact view on the same line
 				contactViewFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding * 2;
@@ -413,9 +423,16 @@
 	CGRect textFieldFrame = CGRectMake(0, 0, self.textField.frame.size.width, textFieldHeight);
 	
 	// Check if we can add the text field on the same line as the last contact view
-	if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - minWidth >= 0){ // add to the same line
-		textFieldFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding;
-		textFieldFrame.size.width = self.frame.size.width - textFieldFrame.origin.x;
+	if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - minWidth >= 0 || self.scrollHorizontal){ // add to the same line
+        if (self.contacts.count == 0 && self.scrollHorizontal){
+            _lineCount = 0;
+            textFieldFrame.origin.x = [self firstLineXOffset];
+            textFieldFrame.size.width = self.bounds.size.width - textFieldFrame.origin.x;
+        }
+        else{
+            textFieldFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding;
+            textFieldFrame.size.width = self.frame.size.width - textFieldFrame.origin.x;
+        }
 	} else {
 		// place text view on the next line
 		_lineCount++;
@@ -465,6 +482,18 @@
 - (void)layoutScrollView {
 	// Adjust scroll view content size
 	CGRect frame = self.bounds;
+    if (_scrollHorizontal) {
+        self.scrollView.contentSize = CGSizeMake(self.textField.frame.origin.x + self.textField.frame.size.width, self.lineHeight + 2 * self.verticalPadding);
+        frame.size.height = self.scrollView.contentSize.height;
+        self.scrollView.frame = frame;
+        CGRect selfFrame = self.frame;
+        selfFrame.size.height = frame.size.height;
+        self.frame = selfFrame;
+        if ([self.delegate respondsToSelector:@selector(contactPickerDidResize:)]){
+            [self.delegate contactPickerDidResize:self];
+        }
+        return;
+    }
 	CGFloat maxFrameHeight = self.maxNumberOfLines * self.lineHeight + 2 * self.verticalPadding; // limit frame to two lines of content
 	CGFloat newHeight = (_lineCount + 1) * self.lineHeight + 2 * self.verticalPadding;
 	self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, newHeight);
