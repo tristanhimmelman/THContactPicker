@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "THContactView.h"
-
+#import "THContactTextField.h"
 @class THContactPickerView;
 
 @protocol THContactPickerDelegate <NSObject>
