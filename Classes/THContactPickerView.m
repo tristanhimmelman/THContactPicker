@@ -552,9 +552,17 @@
     }
     
     CGPoint offset = self.scrollView.contentOffset;
-    offset.y = self.scrollView.contentSize.height - self.scrollView.frame.size.height;
-    if (offset.y > self.scrollView.contentOffset.y){
-        [self scrollToBottomWithAnimation:YES];
+    if (self.scrollHorizontal) {
+        offset.x = self.scrollView.contentSize.width - self.scrollView.frame.size.width;
+        if (offset.x > self.scrollView.contentOffset.x){
+            [self scrollToBottomWithAnimation:YES];
+        }
+    }
+    else{
+        offset.y = self.scrollView.contentSize.height - self.scrollView.frame.size.height;
+        if (offset.y > self.scrollView.contentOffset.y){
+            [self scrollToBottomWithAnimation:YES];
+        }
     }
 }
 
