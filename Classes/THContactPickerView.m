@@ -36,7 +36,8 @@
 #define kHorizontalPaddingWithBackground	2   // the amount of padding to the left and right of each contact view (when bubbles have a non white background)
 #define kHorizontalSidePadding				10  // the amount of padding on the left and right of the view
 #define kVerticalPadding					2   // amount of padding above and below each contact view
-#define kTextFieldMinWidth					20  // minimum width of trailing text view
+#define kContactViewMinWidth				20  // minimum width of trailing text view
+#define kTextFieldMinWidth					120  // minimum width of trailing text view
 #define KMaxNumberOfLinesDefault			2
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -179,7 +180,7 @@
 	
     THContactView *contactView = [[THContactView alloc] initWithName:name style:bubbleStyle selectedStyle:selectedStyle showComma:_showComma];
     contactView.maxWidth = self.frame.size.width - self.promptLabel.frame.origin.x - 2 * _contactHorizontalPadding - 2 * kHorizontalSidePadding;
-    contactView.minWidth = kTextFieldMinWidth + 2 * _contactHorizontalPadding;
+    contactView.minWidth = kContactViewMinWidth + 2 * _contactHorizontalPadding;
     contactView.keyboardAppearance = self.keyboardAppearance;
     contactView.returnKeyType = self.returnKeyType;
     contactView.delegate = self;
@@ -292,26 +293,33 @@
 - (void)scrollToBottomWithAnimation:(BOOL)animated {
     if (animated){
         CGSize size = self.scrollView.contentSize;
-        CGRect frame;
-        if (self.scrollHorizontal) {
-            frame = CGRectMake(size.width - self.scrollView.frame.size.width, 0, self.scrollView.frame.size.width, self.scrollView.frame.size.height);
-        }
-        else{
-            frame = CGRectMake(0, size.height - self.scrollView.frame.size.height, size.width, self.scrollView.frame.size.height);
-        }
+        CGRect frame = CGRectMake(0, size.height - self.scrollView.frame.size.height, size.width, self.scrollView.frame.size.height);
+        
         [self.scrollView scrollRectToVisible:frame animated:animated];
     } else {
         // this block is here because scrollRectToVisible with animated NO causes crashes on iOS 5 when the user tries to delete many contacts really quickly
         CGPoint offset = self.scrollView.contentOffset;
-        if (self.scrollHorizontal) {
-            offset.x = self.scrollView.contentSize.width - self.scrollView.frame.size.width;
-        }
-        else{
-            offset.y = self.scrollView.contentSize.height - self.scrollView.frame.size.height;
-        }
+        offset.y = self.scrollView.contentSize.height - self.scrollView.frame.size.height;
         self.scrollView.contentOffset = offset;
     }
 }
+
+
+//- (void)scrollToRightWithAnimation:(BOOL)animated {
+//    if (animated){
+//        CGSize size = self.scrollView.contentSize;
+//        CGRect frame = CGRectMake(size.width - self.scrollView.frame.size.width, 0, self.scrollView.frame.size.width, self.scrollView.frame.size.height);
+//        
+//        [self.scrollView scrollRectToVisible:frame animated:animated];
+//    } else {
+//        // this block is here because scrollRectToVisible with animated NO causes crashes on iOS 5 when the user tries to delete many contacts really quickly
+//        CGPoint offset = self.scrollView.contentOffset;
+//        
+//        offset.x = self.scrollView.contentSize.width - self.scrollView.frame.size.width;
+//       
+//        self.scrollView.contentOffset = offset;
+//    }
+//}
 
 - (void)removeContactView:(THContactView *)contactView {
     id contact = [self contactForContactView:contactView];
@@ -426,11 +434,11 @@
         if (self.contacts.count == 0 && self.scrollHorizontal){
             _lineCount = 0;
             textFieldFrame.origin.x = [self firstLineXOffset];
-            textFieldFrame.size.width = self.bounds.size.width - textFieldFrame.origin.x;
+            //textFieldFrame.size.width = self.bounds.size.width - textFieldFrame.origin.x;
         }
         else{
             textFieldFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding;
-            textFieldFrame.size.width = self.frame.size.width - textFieldFrame.origin.x;
+            //textFieldFrame.size.width = self.frame.size.width - textFieldFrame.origin.x;
         }
 	} else {
 		// place text view on the next line
@@ -445,7 +453,7 @@
 			textFieldFrame.size.width = self.bounds.size.width - textFieldFrame.origin.x;
 		}
 	}
-	
+    textFieldFrame.size.width = fmax(minWidth,textFieldFrame.size.width);
 	textFieldFrame.origin.y = _lineCount * self.lineHeight + kVerticalPadding + self.verticalPadding;
 	self.textField.frame = textFieldFrame;
 	
