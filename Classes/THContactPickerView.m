@@ -37,7 +37,7 @@
 #define kHorizontalSidePadding				10  // the amount of padding on the left and right of the view
 #define kVerticalPadding					2   // amount of padding above and below each contact view
 #define kContactViewMinWidth				20  // minimum width of trailing text view
-#define kTextFieldMinWidth					120  // minimum width of trailing text view
+#define kTextFieldMinWidth					80  // minimum width of trailing text view
 #define KMaxNumberOfLinesDefault			2
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
