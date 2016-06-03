@@ -47,6 +47,7 @@
 - (void)setContactViewStyle:(THContactViewStyle *)color selectedStyle:(THContactViewStyle *)selectedColor;
 - (void)setPlaceholderLabelText:(NSString *)text;
 - (void)setPlaceholderLabelTextColor:(UIColor *)color;
+- (void)setPlaceholderLabelAttributedText:(NSAttributedString *)attributedText;
 - (void)setPromptLabelText:(NSString *)text;
 - (void)setPromptLabelAttributedText:(NSAttributedString *)attributedText;
 - (void)setPromptLabelTextColor:(UIColor *)color;

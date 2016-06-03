@@ -139,6 +139,11 @@
     self.placeholderLabel.textColor = color;
 }
 
+- (void)setPlaceholderLabelAttributedText:(NSAttributedString *)attributedText
+{
+	self.placeholderLabel.attributedText = attributedText;
+}
+
 - (void)setPromptLabelTextColor:(UIColor *)color{
     self.promptLabel.textColor = color;
 }
