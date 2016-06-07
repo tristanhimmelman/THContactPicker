@@ -90,7 +90,7 @@
     
     self.backgroundColor = [UIColor whiteColor];
     
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture)];
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
     tapGesture.numberOfTapsRequired = 1;
     tapGesture.numberOfTouchesRequired = 1;
     [self addGestureRecognizer:tapGesture];
@@ -630,8 +630,13 @@
 
 #pragma mark - Gesture Recognizer
 
-- (void)handleTapGesture {
+- (void)handleTapGesture:(UITapGestureRecognizer*)gesture {
     if (self.limitToOne && self.contactKeys.count == 1){
+        return;
+    }
+    CGPoint tapPoint = [gesture locationInView:self.scrollView];
+    if (!CGRectContainsPoint(self.textField.frame, tapPoint)) {
+        // Do stuff if they tapped anywhere outside the text field
         return;
     }
     [self scrollToBottomWithAnimation:YES];
