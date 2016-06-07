@@ -612,8 +612,8 @@
     if (self.selectedContactView == contactView){
         self.selectedContactView = nil;
     }
-
-    [self selectTextField];
+    self.textField.hidden = NO;
+    //[self selectTextField];
 	// transfer the text fromt he textField within the ContactView if there was any
 	// ***This is important if the user starts to type when a contact view is selected
     self.textField.text = contactView.textField.text;
