@@ -439,12 +439,11 @@
         if (self.contacts.count == 0 && self.scrollHorizontal){
             _lineCount = 0;
             textFieldFrame.origin.x = [self firstLineXOffset];
-            textFieldFrame.size.width = self.bounds.size.width - textFieldFrame.origin.x;
         }
         else{
             textFieldFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding;
-            textFieldFrame.size.width = self.frame.size.width - textFieldFrame.origin.x;
         }
+        textFieldFrame.size.width = self.frame.size.width - textFieldFrame.origin.x;
 	} else {
 		// place text view on the next line
 		_lineCount++;
