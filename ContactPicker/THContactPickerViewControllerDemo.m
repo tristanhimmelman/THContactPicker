@@ -50,6 +50,8 @@ NSString *THContactPickerContactCellReuseID = @"THContactPickerContactCell";
     self.contactPickerView.delegate = self;
     [self.contactPickerView setPlaceholderLabelText:@"Who would you like to message?"];
     [self.contactPickerView setPromptLabelText:@"To:"];
+    [self.contactPickerView setMaxNumberOfLines:1];
+    self.contactPickerView.scrollHorizontal = YES;
     //[self.contactPickerView setLimitToOne:YES];
     [self.view addSubview:self.contactPickerView];
     

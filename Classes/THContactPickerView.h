@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "THContactView.h"
-
+#import "THContactTextField.h"
 @class THContactPickerView;
 
 @protocol THContactPickerDelegate <NSObject>
@@ -26,6 +26,7 @@
 
 @interface THContactPickerView : UIView <UITextViewDelegate, THContactViewDelegate, UIScrollViewDelegate, UITextInputTraits>
 
+@property (nonatomic, strong) THContactTextField *textField;
 @property (nonatomic, strong) THContactView *selectedContactView;
 @property (nonatomic, assign) IBOutlet id <THContactPickerDelegate>delegate;
 
@@ -33,6 +34,8 @@
 @property (nonatomic, assign) CGFloat verticalPadding;		// amount of padding above and below each contact view
 @property (nonatomic, assign) NSInteger maxNumberOfLines;	// maximum number of lines the view will display before scrolling
 @property (nonatomic, strong) UIFont *font;
+
+@property (nonatomic, assign) BOOL scrollHorizontal;	    // scroll to horizontal
 
 - (void)addContact:(id)contact withName:(NSString *)name;
 - (void)addContact:(id)contact withName:(NSString *)name withStyle:(THContactViewStyle*)bubbleStyle andSelectedStyle:(THContactViewStyle*) selectedStyle;
@@ -44,6 +47,7 @@
 - (void)setContactViewStyle:(THContactViewStyle *)color selectedStyle:(THContactViewStyle *)selectedColor;
 - (void)setPlaceholderLabelText:(NSString *)text;
 - (void)setPlaceholderLabelTextColor:(UIColor *)color;
+- (void)setPlaceholderLabelAttributedText:(NSAttributedString *)attributedText;
 - (void)setPromptLabelText:(NSString *)text;
 - (void)setPromptLabelAttributedText:(NSAttributedString *)attributedText;
 - (void)setPromptLabelTextColor:(UIColor *)color;

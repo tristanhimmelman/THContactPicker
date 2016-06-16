@@ -24,7 +24,6 @@
 @property (nonatomic, strong) UILabel *placeholderLabel;
 @property (nonatomic, strong) UILabel *promptLabel;
 @property (nonatomic, assign) CGFloat lineHeight;
-@property (nonatomic, strong) THContactTextField *textField;
 @property (nonatomic, strong) THContactViewStyle *contactViewStyle;
 @property (nonatomic, strong) THContactViewStyle *contactViewSelectedStyle;
 
@@ -37,7 +36,8 @@
 #define kHorizontalPaddingWithBackground	2   // the amount of padding to the left and right of each contact view (when bubbles have a non white background)
 #define kHorizontalSidePadding				10  // the amount of padding on the left and right of the view
 #define kVerticalPadding					2   // amount of padding above and below each contact view
-#define kTextFieldMinWidth					20  // minimum width of trailing text view
+#define kContactViewMinWidth				20  // minimum width of trailing text view
+#define kTextFieldMinWidth					80  // minimum width of trailing text view
 #define KMaxNumberOfLinesDefault			2
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -90,7 +90,7 @@
     
     self.backgroundColor = [UIColor whiteColor];
     
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture)];
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
     tapGesture.numberOfTapsRequired = 1;
     tapGesture.numberOfTouchesRequired = 1;
     [self addGestureRecognizer:tapGesture];
@@ -139,6 +139,11 @@
     self.placeholderLabel.textColor = color;
 }
 
+- (void)setPlaceholderLabelAttributedText:(NSAttributedString *)attributedText
+{
+	self.placeholderLabel.attributedText = attributedText;
+}
+
 - (void)setPromptLabelTextColor:(UIColor *)color{
     self.promptLabel.textColor = color;
 }
@@ -180,7 +185,7 @@
 	
     THContactView *contactView = [[THContactView alloc] initWithName:name style:bubbleStyle selectedStyle:selectedStyle showComma:_showComma];
     contactView.maxWidth = self.frame.size.width - self.promptLabel.frame.origin.x - 2 * _contactHorizontalPadding - 2 * kHorizontalSidePadding;
-    contactView.minWidth = kTextFieldMinWidth + 2 * _contactHorizontalPadding;
+    contactView.minWidth = kContactViewMinWidth + 2 * _contactHorizontalPadding;
     contactView.keyboardAppearance = self.keyboardAppearance;
     contactView.returnKeyType = self.returnKeyType;
     contactView.delegate = self;
@@ -304,6 +309,23 @@
     }
 }
 
+
+//- (void)scrollToRightWithAnimation:(BOOL)animated {
+//    if (animated){
+//        CGSize size = self.scrollView.contentSize;
+//        CGRect frame = CGRectMake(size.width - self.scrollView.frame.size.width, 0, self.scrollView.frame.size.width, self.scrollView.frame.size.height);
+//        
+//        [self.scrollView scrollRectToVisible:frame animated:animated];
+//    } else {
+//        // this block is here because scrollRectToVisible with animated NO causes crashes on iOS 5 when the user tries to delete many contacts really quickly
+//        CGPoint offset = self.scrollView.contentOffset;
+//        
+//        offset.x = self.scrollView.contentSize.width - self.scrollView.frame.size.width;
+//       
+//        self.scrollView.contentOffset = offset;
+//    }
+//}
+
 - (void)removeContactView:(THContactView *)contactView {
     id contact = [self contactForContactView:contactView];
     
@@ -386,7 +408,7 @@
 		} else {
 			// Check if contact view will fit on the current line
 			CGFloat width = contactViewFrame.size.width + 2 * _contactHorizontalPadding;
-			if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - width >= 0){
+			if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - width >= 0 || self.scrollHorizontal){
 				// add to the same line
 				// Place contact view just after last contact view on the same line
 				contactViewFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding * 2;
@@ -413,9 +435,15 @@
 	CGRect textFieldFrame = CGRectMake(0, 0, self.textField.frame.size.width, textFieldHeight);
 	
 	// Check if we can add the text field on the same line as the last contact view
-	if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - minWidth >= 0){ // add to the same line
-		textFieldFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding;
-		textFieldFrame.size.width = self.frame.size.width - textFieldFrame.origin.x;
+	if (self.frame.size.width - kHorizontalSidePadding - _frameOfLastView.origin.x - _frameOfLastView.size.width - minWidth >= 0 || self.scrollHorizontal){ // add to the same line
+        if (self.contacts.count == 0 && self.scrollHorizontal){
+            _lineCount = 0;
+            textFieldFrame.origin.x = [self firstLineXOffset];
+        }
+        else{
+            textFieldFrame.origin.x = _frameOfLastView.origin.x + _frameOfLastView.size.width + _contactHorizontalPadding;
+        }
+        textFieldFrame.size.width = self.frame.size.width - textFieldFrame.origin.x;
 	} else {
 		// place text view on the next line
 		_lineCount++;
@@ -429,7 +457,7 @@
 			textFieldFrame.size.width = self.bounds.size.width - textFieldFrame.origin.x;
 		}
 	}
-	
+    textFieldFrame.size.width = fmax(minWidth,textFieldFrame.size.width);
 	textFieldFrame.origin.y = _lineCount * self.lineHeight + kVerticalPadding + self.verticalPadding;
 	self.textField.frame = textFieldFrame;
 	
@@ -465,6 +493,18 @@
 - (void)layoutScrollView {
 	// Adjust scroll view content size
 	CGRect frame = self.bounds;
+    if (_scrollHorizontal) {
+        self.scrollView.contentSize = CGSizeMake(self.textField.frame.origin.x + self.textField.frame.size.width, self.lineHeight + 2 * self.verticalPadding);
+        frame.size.height = self.scrollView.contentSize.height;
+        self.scrollView.frame = frame;
+        CGRect selfFrame = self.frame;
+        selfFrame.size.height = frame.size.height;
+        self.frame = selfFrame;
+        if ([self.delegate respondsToSelector:@selector(contactPickerDidResize:)]){
+            [self.delegate contactPickerDidResize:self];
+        }
+        return;
+    }
 	CGFloat maxFrameHeight = self.maxNumberOfLines * self.lineHeight + 2 * self.verticalPadding; // limit frame to two lines of content
 	CGFloat newHeight = (_lineCount + 1) * self.lineHeight + 2 * self.verticalPadding;
 	self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width, newHeight);
@@ -516,9 +556,17 @@
     }
     
     CGPoint offset = self.scrollView.contentOffset;
-    offset.y = self.scrollView.contentSize.height - self.scrollView.frame.size.height;
-    if (offset.y > self.scrollView.contentOffset.y){
-        [self scrollToBottomWithAnimation:YES];
+    if (self.scrollHorizontal) {
+        offset.x = self.scrollView.contentSize.width - self.scrollView.frame.size.width;
+        if (offset.x > self.scrollView.contentOffset.x){
+            [self scrollToBottomWithAnimation:YES];
+        }
+    }
+    else{
+        offset.y = self.scrollView.contentSize.height - self.scrollView.frame.size.height;
+        if (offset.y > self.scrollView.contentOffset.y){
+            [self scrollToBottomWithAnimation:YES];
+        }
     }
 }
 
@@ -563,8 +611,8 @@
     if (self.selectedContactView == contactView){
         self.selectedContactView = nil;
     }
-
-    [self selectTextField];
+    self.textField.hidden = NO;
+    //[self selectTextField];
 	// transfer the text fromt he textField within the ContactView if there was any
 	// ***This is important if the user starts to type when a contact view is selected
     self.textField.text = contactView.textField.text;
@@ -581,8 +629,13 @@
 
 #pragma mark - Gesture Recognizer
 
-- (void)handleTapGesture {
+- (void)handleTapGesture:(UITapGestureRecognizer*)gesture {
     if (self.limitToOne && self.contactKeys.count == 1){
+        return;
+    }
+    CGPoint tapPoint = [gesture locationInView:self.scrollView];
+    if (!CGRectContainsPoint(self.textField.frame, tapPoint)) {
+        // Do stuff if they tapped anywhere outside the text field
         return;
     }
     [self scrollToBottomWithAnimation:YES];
