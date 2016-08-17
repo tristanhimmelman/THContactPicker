@@ -16,6 +16,7 @@
 @optional
 - (void)contactPickerDidResize:(THContactPickerView *)contactPicker;
 - (void)contactPicker:(THContactPickerView *)contactPicker didSelectContact:(id)contact;
+- (BOOL)contactPicker:(THContactPickerView *)contactPicker shouldRemoveContact:(id)contact;
 - (void)contactPicker:(THContactPickerView *)contactPicker didRemoveContact:(id)contact;
 - (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidBeginEditing:(UITextField *)textField;
 - (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidEndEditing:(UITextField *)textField;
