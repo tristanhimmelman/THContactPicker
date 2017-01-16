@@ -311,6 +311,12 @@
         return;
     }
     
+    if ([self.delegate respondsToSelector:@selector(contactPicker:shouldRemoveContact:)]){
+        if (![self.delegate contactPicker:self shouldRemoveContact:[contact nonretainedObjectValue]]){
+            return;
+        }
+    }
+    
     if ([self.delegate respondsToSelector:@selector(contactPicker:didRemoveContact:)]){
         [self.delegate contactPicker:self didRemoveContact:[contact nonretainedObjectValue]];
     }
