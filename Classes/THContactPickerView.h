@@ -21,6 +21,7 @@
 - (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidEndEditing:(UITextField *)textField;
 - (BOOL)contactPicker:(THContactPickerView *)contactPicker textFieldShouldReturn:(UITextField *)textField;
 - (void)contactPicker:(THContactPickerView *)contactPicker textFieldDidChange:(UITextField *)textField;
+- (BOOL)contactPicker:(THContactPickerView *)contactPicker textFieldShouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string;
 
 @end
 

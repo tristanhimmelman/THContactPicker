@@ -541,6 +541,14 @@
     }
 }
 
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if ([self.delegate respondsToSelector:@selector(contactPicker:textFieldShouldChangeCharactersInRange:replacementString:)]){
+        return [self.delegate contactPicker:self textFieldShouldChangeCharactersInRange:range replacementString:string];
+    }
+    return YES;
+}
+
 #pragma mark - THContactViewDelegate Functions
 
 - (void)contactViewWasSelected:(THContactView *)contactView {
